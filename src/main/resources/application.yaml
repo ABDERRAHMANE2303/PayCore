@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: "file:./.env[.properties]"
   application:
     name: paycore
   datasource:
