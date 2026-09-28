@@ -2,16 +2,14 @@ package com.paycore.backend.controllers;
 
 
 import com.paycore.backend.dtos.Requests.CreateCustomerRequest;
-import com.paycore.backend.dtos.Responses.CreateCustomerResponse;
-import com.paycore.backend.entities.Customer;
+import com.paycore.backend.dtos.Responses.CustomerInfosResponse;
 import com.paycore.backend.services.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/customers")
@@ -23,11 +21,19 @@ public class CustomerController {
     }
 
     @PostMapping()
-    public ResponseEntity<CreateCustomerResponse> createCustomer(@Valid
+    public ResponseEntity<CustomerInfosResponse> createCustomer(@Valid
                                                                  @RequestBody CreateCustomerRequest request){
-        CreateCustomerResponse response = customerService.createCustomer(request);
+        CustomerInfosResponse response = customerService.createCustomer(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
+                .body(response);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomerInfosResponse> getCustomer(@PathVariable UUID id){
+        CustomerInfosResponse response = customerService.getCustomerById(id);
+        return ResponseEntity
+                .status(HttpStatus.OK)
                 .body(response);
     }
 }
