@@ -1,8 +1,8 @@
 package com.paycore.backend.services;
 
-import com.paycore.backend.dtos.Requests.ChangeCustomerStatusRequest;
-import com.paycore.backend.dtos.Requests.CreateCustomerRequest;
-import com.paycore.backend.dtos.Responses.CustomerInfosResponse;
+import com.paycore.backend.dtos.Requests.ChangeCustomerStatusReq;
+import com.paycore.backend.dtos.Requests.CreateCustomerReq;
+import com.paycore.backend.dtos.Responses.CustomerInfosRes;
 import com.paycore.backend.entities.Customer;
 import com.paycore.backend.enums.CustomerStatus;
 import com.paycore.backend.exceptions.custom.CustomerNotFoundException;
@@ -24,14 +24,14 @@ public class CustomerService {
     }
 
     @Transactional
-    public CustomerInfosResponse createCustomer(CreateCustomerRequest request){
+    public CustomerInfosRes createCustomer(CreateCustomerReq request){
         Customer customer = new Customer(
                 request.name()
         );
 
         customerRepository.save(customer);
 
-        CustomerInfosResponse reponse = new CustomerInfosResponse(
+        CustomerInfosRes reponse = new CustomerInfosRes(
                 customer.getId(),
                 customer.getName(),
                 customer.getCreatedAt(),
@@ -42,12 +42,12 @@ public class CustomerService {
     }
 
     @Transactional
-    public CustomerInfosResponse getCustomerById(UUID id){
+    public CustomerInfosRes getCustomerById(UUID id){
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(
                         () -> new CustomerNotFoundException("Customer " + id + " was not found")
                 );
-        CustomerInfosResponse reponse = new CustomerInfosResponse(
+        CustomerInfosRes reponse = new CustomerInfosRes(
                 customer.getId(),
                 customer.getName(),
                 customer.getCreatedAt(),
@@ -57,15 +57,15 @@ public class CustomerService {
     }
 
     @Transactional
-    public List<CustomerInfosResponse> getAllCustomer(CustomerStatus status){
+    public List<CustomerInfosRes> getAllCustomer(CustomerStatus status){
 
         List<Customer> customers = status == null
                 ?customerRepository.findAll()
                 :customerRepository.findByStatus(status);
 
-        List<CustomerInfosResponse> response = new ArrayList<>();
+        List<CustomerInfosRes> response = new ArrayList<>();
         for (Customer customer : customers) {
-            CustomerInfosResponse customerInfos = new CustomerInfosResponse(
+            CustomerInfosRes customerInfos = new CustomerInfosRes(
                     customer.getId(),
                     customer.getName(),
                     customer.getCreatedAt(),
@@ -78,7 +78,7 @@ public class CustomerService {
     }
 
     @Transactional
-    public void changeCustomerStatus(UUID id, ChangeCustomerStatusRequest request){
+    public void changeCustomerStatus(UUID id, ChangeCustomerStatusReq request){
         Customer customer = customerRepository.findById(id)
                         .orElseThrow(
                                 () -> new CustomerNotFoundException("customer" + id + "Not found")

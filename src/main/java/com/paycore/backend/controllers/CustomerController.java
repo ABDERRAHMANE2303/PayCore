@@ -1,9 +1,9 @@
 package com.paycore.backend.controllers;
 
 
-import com.paycore.backend.dtos.Requests.ChangeCustomerStatusRequest;
-import com.paycore.backend.dtos.Requests.CreateCustomerRequest;
-import com.paycore.backend.dtos.Responses.CustomerInfosResponse;
+import com.paycore.backend.dtos.Requests.ChangeCustomerStatusReq;
+import com.paycore.backend.dtos.Requests.CreateCustomerReq;
+import com.paycore.backend.dtos.Responses.CustomerInfosRes;
 import com.paycore.backend.enums.CustomerStatus;
 import com.paycore.backend.services.CustomerService;
 import jakarta.validation.Valid;
@@ -24,27 +24,27 @@ public class CustomerController {
     }
 
     @PostMapping()
-    public ResponseEntity<CustomerInfosResponse> createCustomer(@Valid
-                                                                 @RequestBody CreateCustomerRequest request){
-        CustomerInfosResponse response = customerService.createCustomer(request);
+    public ResponseEntity<CustomerInfosRes> createCustomer(@Valid
+                                                                 @RequestBody CreateCustomerReq request){
+        CustomerInfosRes response = customerService.createCustomer(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerInfosResponse> getCustomer(@PathVariable UUID id){
-        CustomerInfosResponse response = customerService.getCustomerById(id);
+    public ResponseEntity<CustomerInfosRes> getCustomer(@PathVariable UUID id){
+        CustomerInfosRes response = customerService.getCustomerById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
 
     @GetMapping()
-    public ResponseEntity<List<CustomerInfosResponse>> getAllCustomers(
+    public ResponseEntity<List<CustomerInfosRes>> getAllCustomers(
             @RequestParam(required = false)
             CustomerStatus status){
-        List<CustomerInfosResponse> response = customerService.getAllCustomer(status);
+        List<CustomerInfosRes> response = customerService.getAllCustomer(status);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
@@ -53,7 +53,7 @@ public class CustomerController {
     @PatchMapping("/{id}/status")
     public ResponseEntity<String> changeCustomerStatus(
             @PathVariable UUID id,
-            @Valid @RequestBody ChangeCustomerStatusRequest request){
+            @Valid @RequestBody ChangeCustomerStatusReq request){
         customerService.changeCustomerStatus(id, request);
         return ResponseEntity.ok("Status updated successfully");
     }

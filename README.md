@@ -89,7 +89,7 @@ ACTIVE
 ## Create Customer
 
 ```http
-POST /api/v1/customers
+POST /api/customers
 ```
 
 Request:
@@ -131,7 +131,7 @@ Do **not** accept `id`, `status`, or `createdAt` from the client.
 ## Get Customer
 
 ```http
-GET /api/v1/customers/{id}
+GET /api/customers/{id}
 ```
 
 Expected:
@@ -146,13 +146,13 @@ Expected:
 ## List Customers
 
 ```http
-GET /api/v1/customers
+GET /api/customers
 ```
 
 Optional filter:
 
 ```http
-GET /api/v1/customers?status=ACTIVE
+GET /api/customers?status=ACTIVE
 ```
 
 Return customer response DTOs, not entities.
@@ -162,7 +162,7 @@ Return customer response DTOs, not entities.
 ## Change Customer Status
 
 ```http
-PATCH /api/v1/customers/{id}/status
+PATCH /api/customers/{id}/status
 ```
 
 Request:
@@ -228,7 +228,7 @@ enum MerchantStatus {
 ## Create Merchant
 
 ```http
-POST /api/v1/merchants
+POST /api/merchants
 ```
 
 Request:
@@ -266,7 +266,7 @@ Expected:
 ## Get Merchant
 
 ```http
-GET /api/v1/merchants/{id}
+GET /api/merchants/{id}
 ```
 
 ```text
@@ -279,14 +279,14 @@ GET /api/v1/merchants/{id}
 ## List Merchants
 
 ```http
-GET /api/v1/merchants
+GET /api/merchants
 ```
 
 Optional:
 
 ```http
-GET /api/v1/merchants?status=ACTIVE
-GET /api/v1/merchants?category=ECOMMERCE
+GET /api/merchants?status=ACTIVE
+GET /api/merchants?category=ECOMMERCE
 ```
 
 ---
@@ -294,7 +294,7 @@ GET /api/v1/merchants?category=ECOMMERCE
 ## Change Merchant Status
 
 ```http
-PATCH /api/v1/merchants/{id}/status
+PATCH /api/merchants/{id}/status
 ```
 
 Request:
@@ -365,7 +365,7 @@ enum PaymentStatus {
 # 5. Create Payment
 
 ```http
-POST /api/v1/payments
+POST /api/payments
 ```
 
 Request:
@@ -503,7 +503,7 @@ The fee exists to give each implementation different behavior. Store it on the g
 # 7. Process Payment Endpoint
 
 ```http
-POST /api/v1/payments/{id}/process
+POST /api/payments/{id}/process
 ```
 
 Only:
@@ -651,7 +651,7 @@ Transaction -> record of a processing/refund attempt
 # 10. Refund Payment
 
 ```http
-POST /api/v1/payments/{id}/refund
+POST /api/payments/{id}/refund
 ```
 
 For now support **full refunds only**.
@@ -704,7 +704,7 @@ No partial refunds in the initial implementation.
 # 11. Get Payment
 
 ```http
-GET /api/v1/payments/{id}
+GET /api/payments/{id}
 ```
 
 Response:
@@ -737,7 +737,7 @@ Return IDs / useful fields through a DTO.
 # 12. List, Filter & Sort Payments
 
 ```http
-GET /api/v1/payments
+GET /api/payments
 ```
 
 Support optional filters:
@@ -754,33 +754,33 @@ maxAmount
 Examples:
 
 ```http
-GET /api/v1/payments?status=SUCCESS
+GET /api/payments?status=SUCCESS
 
-GET /api/v1/payments?method=CARD
+GET /api/payments?method=CARD
 
-GET /api/v1/payments?customerId={id}
+GET /api/payments?customerId={id}
 
-GET /api/v1/payments?minAmount=100&maxAmount=1000
+GET /api/payments?minAmount=100&maxAmount=1000
 ```
 
 Support pagination:
 
 ```http
-GET /api/v1/payments?page=0&size=20
+GET /api/payments?page=0&size=20
 ```
 
 Support sorting:
 
 ```http
-GET /api/v1/payments?sort=amount,desc
+GET /api/payments?sort=amount,desc
 
-GET /api/v1/payments?sort=createdAt,asc
+GET /api/payments?sort=createdAt,asc
 ```
 
 Combined example:
 
 ```http
-GET /api/v1/payments?status=SUCCESS&method=CARD&page=0&size=20&sort=createdAt,desc
+GET /api/payments?status=SUCCESS&method=CARD&page=0&size=20&sort=createdAt,desc
 ```
 
 Filtering/sorting should happen through the persistence layer.
@@ -804,7 +804,7 @@ You don't need to build an advanced dynamic query framework. Implement the filte
 # 13. List Payment Transactions
 
 ```http
-GET /api/v1/payments/{id}/transactions
+GET /api/payments/{id}/transactions
 ```
 
 Returns all processing/refund transactions for the payment.
@@ -836,7 +836,7 @@ Example:
 Keep this feature deliberately small.
 
 ```http
-GET /api/v1/payments/statistics
+GET /api/payments/statistics
 ```
 
 Return:
@@ -1115,31 +1115,31 @@ No need to test every trivial getter or framework behavior.
 
 | Method | Endpoint | Purpose |
 |---|---|---|
-| `POST` | `/api/v1/customers` | Create |
-| `GET` | `/api/v1/customers/{id}` | Get |
-| `GET` | `/api/v1/customers` | List/filter |
-| `PATCH` | `/api/v1/customers/{id}/status` | Change status |
+| `POST` | `/api/customers` | Create |
+| `GET` | `/api/customers/{id}` | Get |
+| `GET` | `/api/customers` | List/filter |
+| `PATCH` | `/api/customers/{id}/status` | Change status |
 
 ## Merchants
 
 | Method | Endpoint | Purpose |
 |---|---|---|
-| `POST` | `/api/v1/merchants` | Create |
-| `GET` | `/api/v1/merchants/{id}` | Get |
-| `GET` | `/api/v1/merchants` | List/filter |
-| `PATCH` | `/api/v1/merchants/{id}/status` | Change status |
+| `POST` | `/api/merchants` | Create |
+| `GET` | `/api/merchants/{id}` | Get |
+| `GET` | `/api/merchants` | List/filter |
+| `PATCH` | `/api/merchants/{id}/status` | Change status |
 
 ## Payments
 
 | Method | Endpoint | Purpose |
 |---|---|---|
-| `POST` | `/api/v1/payments` | Create payment |
-| `GET` | `/api/v1/payments/{id}` | Get payment |
-| `GET` | `/api/v1/payments` | List/filter/sort/page |
-| `POST` | `/api/v1/payments/{id}/process` | Process |
-| `POST` | `/api/v1/payments/{id}/refund` | Refund |
-| `GET` | `/api/v1/payments/{id}/transactions` | Payment history |
-| `GET` | `/api/v1/payments/statistics` | Statistics |
+| `POST` | `/api/payments` | Create payment |
+| `GET` | `/api/payments/{id}` | Get payment |
+| `GET` | `/api/payments` | List/filter/sort/page |
+| `POST` | `/api/payments/{id}/process` | Process |
+| `POST` | `/api/payments/{id}/refund` | Refund |
+| `GET` | `/api/payments/{id}/transactions` | Payment history |
+| `GET` | `/api/payments/statistics` | Statistics |
 
 ---
 
