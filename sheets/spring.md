@@ -281,6 +281,7 @@ public ResponseEntity<Void> delete(
 ```
 
 ## ResponseEntity
+ResponseEntity is a Spring object that represents the whole HTTP response: its status code, headers, and body. You return it from a controller when you want to control those parts explicitly.
 
 ```java
 ResponseEntity.ok(body);
@@ -295,6 +296,18 @@ ResponseEntity.notFound().build();
 ```
 
 Use it when explicit control over status/headers is useful. Otherwise, returning the response object directly is fine.
+
+Common HTTP statuses:
+
+| Spring name | HTTP code | Typical use |
+|---|---:|---|
+| `HttpStatus.OK` | `200` | Successful GET or update |
+| `HttpStatus.CREATED` | `201` | Resource created |
+| `HttpStatus.NO_CONTENT` | `204` | Success with no response body |
+| `HttpStatus.BAD_REQUEST` | `400` | Invalid request |
+| `HttpStatus.NOT_FOUND` | `404` | Resource missing |
+| `HttpStatus.CONFLICT` | `409` | Conflicting request |
+| `HttpStatus.INTERNAL_SERVER_ERROR` | `500` | Unexpected server error |
 
 ---
 

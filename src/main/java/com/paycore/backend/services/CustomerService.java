@@ -8,6 +8,8 @@ import com.paycore.backend.repositories.CustomerRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,8 +42,8 @@ public class CustomerService {
 
     @Transactional
     public CustomerInfosResponse getCustomerById(UUID id){
-        Customer customer = customerRepository.findById(id).
-                orElseThrow(
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(
                         () -> new CustomerNotFoundException("Customer " + id + " was not found")
                 );
         CustomerInfosResponse reponse = new CustomerInfosResponse(
@@ -52,4 +54,23 @@ public class CustomerService {
         );
         return reponse;
     }
+
+    @Transactional
+    public List<CustomerInfosResponse> getAllCustomer(){
+        List<Customer> customers = customerRepository.findAll();
+        List<CustomerInfosResponse> response = new ArrayList<>();
+        for (Customer customer : customers) {
+            CustomerInfosResponse customerInfos = new CustomerInfosResponse(
+                    customer.getId(),
+                    customer.getName(),
+                    customer.getCreatedAt(),
+                    customer.getStatus()
+            );
+            response.add(customerInfos);
+        }
+
+        return response;
+    }
 }
+
+
