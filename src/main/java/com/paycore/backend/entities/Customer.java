@@ -1,5 +1,6 @@
 package com.paycore.backend.entities;
 
+import com.paycore.backend.enums.CustomerStatus;
 import jakarta.persistence.*;
 import jdk.jfr.Enabled;
 
@@ -54,8 +55,5 @@ public class Customer {
         return createdAt;
     }
 
-    public  enum CustomerStatus {
-        ACTIVE,
-        INACTIVE
-    }
+
 }

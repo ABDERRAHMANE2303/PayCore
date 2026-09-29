@@ -1,9 +1,10 @@
 package com.paycore.backend.controllers;
 
 
+import com.paycore.backend.dtos.Requests.ChangeCustomerStatusRequest;
 import com.paycore.backend.dtos.Requests.CreateCustomerRequest;
 import com.paycore.backend.dtos.Responses.CustomerInfosResponse;
-import com.paycore.backend.entities.Customer;
+import com.paycore.backend.enums.CustomerStatus;
 import com.paycore.backend.services.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -42,10 +43,18 @@ public class CustomerController {
     @GetMapping()
     public ResponseEntity<List<CustomerInfosResponse>> getAllCustomers(
             @RequestParam(required = false)
-            Customer.CustomerStatus status){
+            CustomerStatus status){
         List<CustomerInfosResponse> response = customerService.getAllCustomer(status);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<String> changeCustomerStatus(
+            @PathVariable UUID id,
+            @Valid @RequestBody ChangeCustomerStatusRequest request){
+        customerService.changeCustomerStatus(id, request);
+        return ResponseEntity.ok("Status updated successfully");
     }
 }
