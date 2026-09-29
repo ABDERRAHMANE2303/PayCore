@@ -56,8 +56,12 @@ public class CustomerService {
     }
 
     @Transactional
-    public List<CustomerInfosResponse> getAllCustomer(){
-        List<Customer> customers = customerRepository.findAll();
+    public List<CustomerInfosResponse> getAllCustomer(Customer.CustomerStatus status){
+
+        List<Customer> customers = status == null
+                ?customerRepository.findAll()
+                :customerRepository.findByStatus(status);
+
         List<CustomerInfosResponse> response = new ArrayList<>();
         for (Customer customer : customers) {
             CustomerInfosResponse customerInfos = new CustomerInfosResponse(

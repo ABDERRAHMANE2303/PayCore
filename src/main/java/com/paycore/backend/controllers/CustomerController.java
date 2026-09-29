@@ -3,6 +3,7 @@ package com.paycore.backend.controllers;
 
 import com.paycore.backend.dtos.Requests.CreateCustomerRequest;
 import com.paycore.backend.dtos.Responses.CustomerInfosResponse;
+import com.paycore.backend.entities.Customer;
 import com.paycore.backend.services.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -39,8 +40,10 @@ public class CustomerController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<CustomerInfosResponse>> getAllCustomers(){
-        List<CustomerInfosResponse> response = customerService.getAllCustomer();
+    public ResponseEntity<List<CustomerInfosResponse>> getAllCustomers(
+            @RequestParam(required = false)
+            Customer.CustomerStatus status){
+        List<CustomerInfosResponse> response = customerService.getAllCustomer(status);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
