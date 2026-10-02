@@ -25,6 +25,7 @@ public class CustomerService {
 
     @Transactional
     public CustomerInfosRes createCustomer(CreateCustomerReq request){
+
         Customer customer = new Customer(
                 request.name()
         );
