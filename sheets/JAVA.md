@@ -66,6 +66,7 @@
   - [7.6 Aggregation & Grouping](#76-aggregation--grouping)
 
 - [8. Practical Backend Patterns](#8-practical-backend-patterns)
+- [9. Unit Testing](#9-unit-testing)
 
 ---
 
@@ -3443,4 +3444,51 @@ Need fixed-size low-level collection?
 -> array
 ```
 
-For normal backend/domain Java, these cover the overwhelming majority of everyday collection needs.
+---
+
+# 9. Unit Testing
+
+## What a Unit Test Does
+
+A unit test runs one small piece of code (often one method or class) and checks that its behavior matches expectations. It runs automatically and fails the build when an assertion is false.
+
+JUnit 5 is the common Java test framework. A test is a normal method marked with `@Test`:
+
+```java
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class AmountRulesTest {
+
+    @Test
+    void rejectsZeroAmount() {
+        IllegalArgumentException error = assertThrows(
+            IllegalArgumentException.class,
+            () -> validateAmount(0)
+        );
+
+        assertEquals("Amount must be positive", error.getMessage());
+    }
+}
+```
+
+If the expected exception is not thrown, or an assertion fails, the test fails. Tests do not usually print results or catch failures themselves; the test runner reports them.
+
+## Arrange, Act, Assert
+
+Structure each test into three steps:
+
+```text
+Arrange: prepare inputs and dependencies
+Act:     call the behavior under test
+Assert:  check the result or side effect
+```
+
+Test observable behavior, including important edge cases. Give tests descriptive names such as `rejectsZeroAmount` or `returnsCustomerWhenFound`. Keep each test focused on one behavior.
+
+## Test Doubles
+
+A mock is a fake dependency controlled by the test. Use one when you want to test a class without involving a database, network, or another service. A mock is not automatically a unit test; the test's scope depends on what real code it runs.
+
+Use real objects for simple values and domain logic where practical. Avoid mocking the class whose behavior the test is meant to verify.

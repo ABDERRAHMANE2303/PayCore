@@ -998,66 +998,70 @@ app:
 
 # 11. Testing
 
-## Service Unit Test — Mockito
+Choose a test type based on what you want to verify. A service unit test calls the service directly and mocks its repository; it does not start Spring or connect to a database.
+
+## Service Unit Test — JUnit + Mockito
 
 ```java
 @ExtendWith(MockitoExtension.class)
-class UserServiceTest {
+class CustomerServiceTest {
 
     @Mock
-    private UserRepository repository;
+    private CustomerRepository customerRepository;
 
     @InjectMocks
-    private UserService service;
+    private CustomerService customerService;
 }
 ```
 
-Stub dependency:
+`@Mock` creates a fake repository. `@InjectMocks` creates the service and supplies that mock to its constructor. Mockito stubbing defines what the fake dependency returns:
 
 ```java
-when(repository.findById(id))
-    .thenReturn(Optional.of(user));
+when(customerRepository.findById(id))
+    .thenReturn(Optional.of(customer));
 ```
 
-Execute:
+Call the real service method, then assert its result:
 
 ```java
-UserResponse result =
-    service.getById(id);
+CustomerInfosRes result = customerService.getCustomerById(id);
+
+assertEquals(id, result.id());
+assertEquals("Alice", result.name());
 ```
 
-Verify:
+To test the missing-customer case, make the mock return `Optional.empty()` and assert that the service throws its custom exception:
 
 ```java
-verify(repository)
-    .findById(id);
-```
-
-Assertions:
-
-```java
-assertEquals(expected, actual);
-
-assertTrue(condition);
+when(customerRepository.findById(id)).thenReturn(Optional.empty());
 
 assertThrows(
-    ResourceNotFoundException.class,
-    () -> service.getById(id)
+    CustomerNotFoundException.class,
+    () -> customerService.getCustomerById(id)
 );
 ```
 
+Mockito can also verify an interaction when that interaction matters to the behavior:
+
+```java
+verify(customerRepository).findById(id);
+```
+
+Prefer asserting the returned result or thrown exception. Verify calls when needed, rather than verifying every implementation detail.
+
 ## Spring Test Types
+
+These tests run progressively more of the application. Use the smallest scope that verifies the behavior you care about.
 
 | Tool | Use |
 |---|---|
-| JUnit | Normal tests/assertions |
-| Mockito | Mock dependencies |
-| `@WebMvcTest` | Controller slice |
-| MockMvc | HTTP/controller testing |
-| `@DataJpaTest` | Repository/JPA slice |
-| `@SpringBootTest` | Full Spring application context |
+| JUnit | Runs test methods and assertions; works with all the types below |
+| Mockito | Replaces dependencies with controllable mocks in unit tests |
+| `@WebMvcTest` + MockMvc | Starts MVC/controller infrastructure without the full app; test routes, JSON, validation, and HTTP status. Mock the service dependency. |
+| `@DataJpaTest` | Loads JPA/repository components and usually an embedded test database; test mappings and repository queries. |
+| `@SpringBootTest` | Starts the full Spring application context; use for a small number of end-to-end integration tests. |
 
-Use the smallest test scope needed.
+Example service behaviors worth testing in PayCore: customer creation, a missing customer, and merchant filtering. Controller tests can separately check that a valid request returns the expected HTTP status and malformed input returns `400`.
 
 ---
 
