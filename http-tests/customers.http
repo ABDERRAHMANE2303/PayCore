@@ -1,0 +1,31 @@
+@baseUrl = http://localhost:8080
+@customerId = {{createCustomer.response.body.id}}
+
+### Create customer
+# @name createCustomer
+POST {{baseUrl}}/api/customers
+Content-Type: application/json
+
+{
+  "name": "Alice Martin"
+}
+
+### Get customer by ID (uses ID from the create request above)
+GET {{baseUrl}}/api/customers/{{customerId}}
+Accept: application/json
+
+### List all customers
+GET {{baseUrl}}/api/customers
+Accept: application/json
+
+### List customers by status
+GET {{baseUrl}}/api/customers?status=ACTIVE
+Accept: application/json
+
+### Change customer status (uses ID from the create request above)
+PATCH {{baseUrl}}/api/customers/{{customerId}}/status
+Content-Type: application/json
+
+{
+  "status": "INACTIVE"
+}

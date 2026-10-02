@@ -1,0 +1,39 @@
+@baseUrl = http://localhost:8080
+
+### Create merchant
+# @name createMerchant
+POST {{baseUrl}}/api/merchants
+Content-Type: application/json
+
+{
+  "name": "Atlas Store",
+  "category": "ECOMMERCE"
+}
+
+### Get merchant by ID (uses ID from the create request above)
+GET {{baseUrl}}/api/merchants/d4cd750f-fdab-47d7-bb45-f475fef35b39
+Accept: application/json
+
+### List all merchants
+GET {{baseUrl}}/api/merchants
+Accept: application/json
+
+### List merchants by status
+GET {{baseUrl}}/api/merchants?status=ACTIVE
+Accept: application/json
+
+### List merchants by category
+GET {{baseUrl}}/api/merchants?category=ECOMMERCE
+Accept: application/json
+
+### List merchants by status and category
+GET {{baseUrl}}/api/merchants?status=ACTIVE&category=ECOMMERCE
+Accept: application/json
+
+### Change merchant status (uses ID from the create request above)
+PATCH {{baseUrl}}/api/merchants/d4cd750f-fdab-47d7-bb45-f475fef35b39/status
+Content-Type: application/json
+
+{
+  "status": "INACTIVE"
+}
