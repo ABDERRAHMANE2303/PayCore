@@ -1,9 +1,11 @@
 package com.paycore.backend.dtos.Responses;
 
-import com.paycore.backend.entities.Customer;
 import com.paycore.backend.enums.Currency;
 import com.paycore.backend.enums.PaymentMethod;
 import com.paycore.backend.enums.PaymentStatus;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,7 +16,7 @@ public record PaymentInfosRes(
         CustomerInfosRes customer,
         MerchantInfosRes merchant,
         BigDecimal amount,
-        Currency currnecy,
+        Currency currency,
         PaymentMethod method,
         PaymentStatus status,
         LocalDateTime createdAt,

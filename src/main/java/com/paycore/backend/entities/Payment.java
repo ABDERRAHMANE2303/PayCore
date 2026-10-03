@@ -18,10 +18,12 @@ public class Payment {
     @GeneratedValue (strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY , optional = false)
+    @JoinColumn ( name = "customer_id" , nullable = false)
     private Customer customer;
 
-    @Column(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY , optional = false)
+    @JoinColumn ( name = "merchant_id" , nullable = false)
     private Merchant merchant;
 
     @Column(nullable = false)
