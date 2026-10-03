@@ -40,9 +40,10 @@
   - [4.1 String](#41-string)
   - [4.2 StringBuilder](#42-stringbuilder)
   - [4.3 Math](#43-math)
-  - [4.4 Dates & Time](#44-dates--time)
-  - [4.5 UUID](#45-uuid)
-  - [4.6 Objects](#46-objects)
+  - [4.4 BigDecimal](#44-bigdecimal)
+  - [4.5 Dates & Time](#45-dates--time)
+  - [4.6 UUID](#46-uuid)
+  - [4.7 Objects](#47-objects)
 
 - [5. Object Equality & Null Handling](#5-object-equality--null-handling)
   - [5.1 == vs equals](#51--vs-equals)
@@ -2077,7 +2078,43 @@ returns:
 
 ---
 
-## 4.4 Dates & Time
+## 4.4 BigDecimal
+
+Use `BigDecimal` for money and other decimal values where precision matters. Avoid `double` for money because many decimal fractions cannot be represented exactly in binary floating-point.
+
+```java
+import java.math.BigDecimal;
+
+BigDecimal amount = new BigDecimal("750.00");
+BigDecimal feeRate = new BigDecimal("0.01");
+BigDecimal fee = amount.multiply(feeRate);
+```
+
+Create from a string (or use `BigDecimal.valueOf(...)` for a primitive number); avoid `new BigDecimal(0.1)`.
+
+Compare using `compareTo`, not `>`, `<`, or `==`:
+
+```java
+if (amount.compareTo(maximumAmount) > 0) {
+    // amount is greater than maximumAmount
+}
+```
+
+`compareTo` returns a negative number, zero, or a positive number. For division that does not terminate exactly, specify a scale and rounding mode:
+
+```java
+BigDecimal result = amount.divide(
+    new BigDecimal("3"),
+    2,
+    RoundingMode.HALF_UP
+);
+```
+
+`equals` also compares scale (`2.0` and `2.00` are not equal); use `compareTo(...) == 0` when comparing numeric value.
+
+---
+
+## 4.5 Dates & Time
 
 Prefer the modern `java.time` API.
 
@@ -2154,7 +2191,7 @@ long minutes =
 
 ---
 
-## 4.5 UUID
+## 4.6 UUID
 
 Useful for generating identifiers.
 
@@ -2181,7 +2218,7 @@ UUID id =
 
 ---
 
-## 4.6 Objects
+## 4.7 Objects
 
 Useful null-safe object utilities.
 
