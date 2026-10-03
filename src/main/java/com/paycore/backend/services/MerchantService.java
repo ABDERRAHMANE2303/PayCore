@@ -9,6 +9,7 @@ import com.paycore.backend.enums.MerchantCategory;
 import com.paycore.backend.enums.MerchantStatus;
 import com.paycore.backend.exceptions.custom.MerchantNotFoundException;
 import com.paycore.backend.repositories.MerchantRepository;
+import com.paycore.backend.utilities.EntityDtoMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +21,12 @@ import java.util.UUID;
 public class MerchantService {
 
     private final MerchantRepository merchantRepository;
+    private final EntityDtoMapper entityDtoMapper;
 
-    public MerchantService( MerchantRepository merchantRepository) {
+    public MerchantService( MerchantRepository merchantRepository,
+                            EntityDtoMapper entityDtoMapper) {
         this.merchantRepository = merchantRepository;
+        this.entityDtoMapper = entityDtoMapper;
     }
 
     @Transactional
@@ -34,13 +38,7 @@ public class MerchantService {
 
         merchantRepository.save(merchant);
 
-        MerchantInfosRes response = new MerchantInfosRes(
-                merchant.getId(),
-                merchant.getName(),
-                merchant.getCategory(),
-                merchant.getStatus(),
-                merchant.getCreatedAt()
-        );
+        MerchantInfosRes response = entityDtoMapper.merchantEntityDtoMapper(merchant);
 
         return  response;
     }
@@ -49,13 +47,7 @@ public class MerchantService {
     public MerchantInfosRes getMerchant(UUID id) {
         Merchant merchant = merchantRepository.findById(id).
                 orElseThrow(() -> new MerchantNotFoundException("Merchant" + id+ "Not found"));
-        MerchantInfosRes response = new MerchantInfosRes(
-                merchant.getId(),
-                merchant.getName(),
-                merchant.getCategory(),
-                merchant.getStatus(),
-                merchant.getCreatedAt()
-        );
+        MerchantInfosRes response = entityDtoMapper.merchantEntityDtoMapper(merchant);
         return response;
     }
 
@@ -77,13 +69,7 @@ public class MerchantService {
         }
 
         for (Merchant merchant :  merchants) {
-            MerchantInfosRes merchantInfos = new MerchantInfosRes(
-                    merchant.getId(),
-                    merchant.getName(),
-                    merchant.getCategory(),
-                    merchant.getStatus(),
-                    merchant.getCreatedAt()
-            );
+            MerchantInfosRes merchantInfos = entityDtoMapper.merchantEntityDtoMapper(merchant);
             response.add(merchantInfos);
         }
         return response;

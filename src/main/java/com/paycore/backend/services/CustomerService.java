@@ -7,6 +7,7 @@ import com.paycore.backend.entities.Customer;
 import com.paycore.backend.enums.CustomerStatus;
 import com.paycore.backend.exceptions.custom.CustomerNotFoundException;
 import com.paycore.backend.repositories.CustomerRepository;
+import com.paycore.backend.utilities.EntityDtoMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +19,13 @@ import java.util.UUID;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final EntityDtoMapper entityDtoMapper;
 
-    public CustomerService(CustomerRepository customerRepository) {
+
+    public CustomerService(CustomerRepository customerRepository,
+                           EntityDtoMapper entityDtoMapper) {
         this.customerRepository = customerRepository;
+        this.entityDtoMapper = entityDtoMapper;
     }
 
     @Transactional
@@ -32,12 +37,7 @@ public class CustomerService {
 
         customerRepository.save(customer);
 
-        CustomerInfosRes reponse = new CustomerInfosRes(
-                customer.getId(),
-                customer.getName(),
-                customer.getCreatedAt(),
-                customer.getStatus()
-        );
+        CustomerInfosRes reponse = entityDtoMapper.customerEntityDtoMapper(customer);
 
         return reponse;
     }
@@ -48,12 +48,7 @@ public class CustomerService {
                 .orElseThrow(
                         () -> new CustomerNotFoundException("Customer " + id + " was not found")
                 );
-        CustomerInfosRes reponse = new CustomerInfosRes(
-                customer.getId(),
-                customer.getName(),
-                customer.getCreatedAt(),
-                customer.getStatus()
-        );
+        CustomerInfosRes reponse = entityDtoMapper.customerEntityDtoMapper(customer);
         return reponse;
     }
 
@@ -66,12 +61,7 @@ public class CustomerService {
 
         List<CustomerInfosRes> response = new ArrayList<>();
         for (Customer customer : customers) {
-            CustomerInfosRes customerInfos = new CustomerInfosRes(
-                    customer.getId(),
-                    customer.getName(),
-                    customer.getCreatedAt(),
-                    customer.getStatus()
-            );
+            CustomerInfosRes customerInfos = entityDtoMapper.customerEntityDtoMapper(customer);
             response.add(customerInfos);
         }
 
