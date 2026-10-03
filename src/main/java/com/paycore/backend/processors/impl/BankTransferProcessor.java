@@ -12,33 +12,27 @@ import java.math.BigDecimal;
 @Component
 public class BankTransferProcessor implements PaymentProcessor {
 
-    private BigDecimal maximumAmount = new BigDecimal("100_000");
+    private BigDecimal maximumAmount = new BigDecimal("100000");
     private BigDecimal fee =  new BigDecimal("0.01");
 
     public BankTransferProcessor() {}
 
     @Override
     public ProcessingResult processPayment(Payment payment){
-
         if (payment.getAmount().compareTo(maximumAmount) > 0 ) {
-            payment.setStatus(PaymentStatus.FAILED);
-
             return new ProcessingResult(
                     payment.getId(),
-                    payment.getStatus(),
+                    PaymentStatus.FAILED,
                     new BigDecimal("0")
             );
         }
 
-        payment.setStatus(PaymentStatus.SUCCESS);
         BigDecimal feeAmount = payment.getAmount().multiply(this.fee);
-
         ProcessingResult result = new ProcessingResult(
                 payment.getId(),
-                payment.getStatus(),
+                PaymentStatus.SUCCESS,
                 feeAmount
         );
-
         return result;
     }
 

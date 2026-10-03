@@ -3,6 +3,7 @@ package com.paycore.backend.exceptions;
 
 import com.paycore.backend.dtos.ApiError;
 import com.paycore.backend.exceptions.custom.InactiveResourceException;
+import com.paycore.backend.exceptions.custom.InvalidPaymentStatusException;
 import com.paycore.backend.exceptions.custom.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,4 +27,9 @@ public class GlobalExceptionHandler  {
     }
 
 
+    @ExceptionHandler(InactiveResourceException.class)
+    public ResponseEntity<ApiError> handleInvalidPaymentStatus(InvalidPaymentStatusException e){
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiError(HttpStatus.CONFLICT.value(), e.getMessage()));
+    }
 }

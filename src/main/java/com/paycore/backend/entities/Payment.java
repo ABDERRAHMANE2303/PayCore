@@ -4,6 +4,7 @@ package com.paycore.backend.entities;
 import com.paycore.backend.enums.Currency;
 import com.paycore.backend.enums.PaymentMethod;
 import com.paycore.backend.enums.PaymentStatus;
+import com.paycore.backend.exceptions.custom.InvalidPaymentStatusException;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -67,46 +68,51 @@ public class Payment {
         this.method = method;
     }
 
+    public void markSuccesful(){
+        if (status != PaymentStatus.PROCESSING){
+            throw new InvalidPaymentStatusException(
+                    "Only a processing payment can succeed");
+        }
+        this.status = PaymentStatus.SUCCESS;
+    }
+
+    public void markFailed(){
+        if (status != PaymentStatus.PROCESSING){
+            throw new InvalidPaymentStatusException(
+                    "Only a processing payment can fail");
+        }
+        this.status = PaymentStatus.FAILED;
+    }
+
+
+
     public UUID getId() {
         return id;
     }
-
     public Customer getCustomer() {
         return customer;
     }
-
     public Merchant getMerchant() {
         return merchant;
     }
-
     public BigDecimal getAmount() {
         return amount;
     }
-
     public Currency getCurrency() {
         return currency;
     }
-
     public PaymentMethod getMethod() {
         return method;
     }
-
     public PaymentStatus getStatus() {
         return status;
     }
-
-    public void setStatus(PaymentStatus status) {
-        this.status = status;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
-
     public LocalDateTime getProcessedAt() {
         return processedAt;
     }
-
     public LocalDateTime getRefundedAt() {
         return refundedAt;
     }
