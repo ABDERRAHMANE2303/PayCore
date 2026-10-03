@@ -478,16 +478,11 @@ Maximum amount: 5,000
 Fee: 0.5%
 ```
 
-If the amount exceeds the method limit:
+The processor returns a failed result with a zero fee if the amount exceeds its method limit. Otherwise, it returns a successful result and calculates the fee:
 
 ```text
-processing -> FAILED
-```
-
-Otherwise:
-
-```text
-processing -> SUCCESS
+amount exceeds limit -> FAILED result, fee = 0
+amount is within limit -> SUCCESS result, calculated fee
 ```
 
 No randomness.
@@ -500,68 +495,7 @@ The fee exists to give each implementation different behavior. Store it on the g
 
 ---
 
-# 7. Process Payment Endpoint
-
-```http
-POST /api/payments/{id}/process
-```
-
-Only:
-
-```text
-PENDING -> PROCESSING -> SUCCESS
-                       ↘ FAILED
-```
-
-is allowed.
-
-Reject processing when status is:
-
-```text
-PROCESSING
-SUCCESS
-FAILED
-REFUNDED
-```
-
-Processing should:
-
-```text
-1. Load payment
-2. Validate current state
-3. Set PROCESSING
-4. Select PaymentProcessor
-5. Process
-6. Create Transaction
-7. Set SUCCESS or FAILED
-8. Set processedAt
-9. Return result
-```
-
-Wrap the operation in a transaction.
-
-Expected:
-
-| Situation | Status |
-|---|---:|
-| Processed | `200` |
-| Payment missing | `404` |
-| Invalid payment state | `409` |
-
-Response example:
-
-```json
-{
-  "paymentId": "...",
-  "status": "SUCCESS",
-  "transactionId": "...",
-  "fee": 15.00
-}
-```
-
----
-
-# 8. Payment State Rules
+# 7. Payment State Rules
 
 Keep state logic inside the `Payment` entity rather than scattering it across controllers.
 
@@ -579,6 +513,8 @@ payment.markRefunded();
 
 Each method should protect its own valid transition.
 
+At minimum, `startProcessing()` should allow only `PENDING -> PROCESSING`. The result returned by a processor is then applied with `markSuccessful()` or `markFailed()`, both of which should allow only a transition from `PROCESSING`. A refund method should allow only `SUCCESS -> REFUNDED`.
+
 Example:
 
 ```text
@@ -593,7 +529,7 @@ Invalid transitions should throw a domain exception.
 
 ---
 
-# 9. Transactions
+# 8. Transactions
 
 ## Model
 
@@ -644,6 +580,67 @@ Payment and Transaction are separate:
 ```text
 Payment     -> business operation/current state
 Transaction -> record of a processing/refund attempt
+```
+
+---
+
+# 9. Process Payment Endpoint
+
+```http
+POST /api/payments/{id}/process
+```
+
+Only:
+
+```text
+PENDING -> PROCESSING -> SUCCESS
+                       ↘ FAILED
+```
+
+is allowed.
+
+Reject processing when status is:
+
+```text
+PROCESSING
+SUCCESS
+FAILED
+REFUNDED
+```
+
+The service operation should:
+
+```text
+1. Load payment
+2. Validate current state
+3. Call `payment.startProcessing()`
+4. Select PaymentProcessor
+5. Process
+6. Create Transaction
+7. Apply the processor result with `payment.markSuccessful()` or `payment.markFailed()`
+8. Set processedAt
+9. Return result
+```
+
+Wrap the database operation in `@Transactional`. This database transaction is separate from the `Transaction` entity, which records the processing attempt.
+
+Expected:
+
+| Situation | Status |
+|---|---:|
+| Processed | `200` |
+| Payment missing | `404` |
+| Invalid payment state | `409` |
+
+Response example:
+
+```json
+{
+  "paymentId": "...",
+  "status": "SUCCESS",
+  "transactionId": "...",
+  "fee": 15.00
+}
 ```
 
 ---
@@ -1153,12 +1150,13 @@ No need to test every trivial getter or framework behavior.
 4. DTO validation + global exceptions
 5. Payment entity + creation
 6. PaymentProcessor interface + implementations
-7. Payment processing + transactions
-8. Transaction entity/history
-9. Refunds
-10. Filtering + sorting + pagination
-11. Statistics
-12. Tests
+7. Payment state-transition methods on Payment
+8. Transaction entity + repository
+9. Process-payment service flow + endpoint
+10. Refunds
+11. Filtering + sorting + pagination
+12. Statistics
+13. Tests
 ```
 
 ## Main Rule
