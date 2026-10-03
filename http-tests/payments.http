@@ -1,0 +1,35 @@
+@baseUrl = http://localhost:8080
+
+### Create an active customer for the payment request
+# @name createCustomer
+POST {{baseUrl}}/api/customers
+Content-Type: application/json
+
+{
+  "name": "Payment Test Customer"
+}
+> {% client.global.set("customerId", response.body.id); %}
+
+### Create an active merchant for the payment request
+# @name createMerchant
+POST {{baseUrl}}/api/merchants
+Content-Type: application/json
+
+{
+  "name": "Payment Test Store",
+  "category": "ECOMMERCE"
+}
+> {% client.global.set("merchantId", response.body.id); %}
+
+### Create payment (run the two setup requests above first)
+# @name createPayment
+POST {{baseUrl}}/payments
+Content-Type: application/json
+
+{
+  "customerID": "{{customerId}}",
+  "merchantID": "{{merchantId}}",
+  "amount": 750.00,
+  "currency": "MAD",
+  "method": "CARD"
+}
