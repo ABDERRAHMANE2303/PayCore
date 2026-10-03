@@ -95,6 +95,10 @@ public class Payment {
         return status;
     }
 
+    public void setStatus(PaymentStatus status) {
+        this.status = status;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
