@@ -5,7 +5,7 @@ import com.paycore.backend.dtos.Requests.CreateCustomerReq;
 import com.paycore.backend.dtos.Responses.CustomerInfosRes;
 import com.paycore.backend.entities.Customer;
 import com.paycore.backend.enums.CustomerStatus;
-import com.paycore.backend.exceptions.custom.CustomerNotFoundException;
+import com.paycore.backend.exceptions.custom.ResourceNotFoundException;
 import com.paycore.backend.repositories.CustomerRepository;
 import com.paycore.backend.utilities.EntityDtoMapper;
 import jakarta.transaction.Transactional;
@@ -46,7 +46,7 @@ public class CustomerService {
     public CustomerInfosRes getCustomerById(UUID id){
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(
-                        () -> new CustomerNotFoundException("Customer " + id + " was not found")
+                        () -> new ResourceNotFoundException("Customer " + id + " was not found")
                 );
         CustomerInfosRes reponse = entityDtoMapper.customerEntityDtoMapper(customer);
         return reponse;
@@ -72,7 +72,7 @@ public class CustomerService {
     public void changeCustomerStatus(UUID id, ChangeCustomerStatusReq request){
         Customer customer = customerRepository.findById(id)
                         .orElseThrow(
-                                () -> new CustomerNotFoundException("customer" + id + "Not found")
+                                () -> new ResourceNotFoundException("customer" + id + "Not found")
                         );
         customer.setStatus(request.status());
         customerRepository.save(customer);

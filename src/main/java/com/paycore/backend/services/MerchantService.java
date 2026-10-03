@@ -7,7 +7,7 @@ import com.paycore.backend.dtos.Responses.MerchantInfosRes;
 import com.paycore.backend.entities.Merchant;
 import com.paycore.backend.enums.MerchantCategory;
 import com.paycore.backend.enums.MerchantStatus;
-import com.paycore.backend.exceptions.custom.MerchantNotFoundException;
+import com.paycore.backend.exceptions.custom.ResourceNotFoundException;
 import com.paycore.backend.repositories.MerchantRepository;
 import com.paycore.backend.utilities.EntityDtoMapper;
 import jakarta.transaction.Transactional;
@@ -46,7 +46,7 @@ public class MerchantService {
     @Transactional
     public MerchantInfosRes getMerchant(UUID id) {
         Merchant merchant = merchantRepository.findById(id).
-                orElseThrow(() -> new MerchantNotFoundException("Merchant" + id+ "Not found"));
+                orElseThrow(() -> new ResourceNotFoundException("Merchant" + id+ "Not found"));
         MerchantInfosRes response = entityDtoMapper.merchantEntityDtoMapper(merchant);
         return response;
     }
@@ -78,7 +78,7 @@ public class MerchantService {
     @Transactional
     public  void changeMerchantStatus(UUID id, ChangeMerchantStatusReq request){
         Merchant merchant = merchantRepository.findById(id)
-                .orElseThrow(() -> new MerchantNotFoundException("Merchant" + id+ "Not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Merchant" + id+ "Not found"));
         merchant.setStatus(request.status());
         merchantRepository.save(merchant);
 
