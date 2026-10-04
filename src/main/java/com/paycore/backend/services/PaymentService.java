@@ -3,19 +3,28 @@ package com.paycore.backend.services;
 
 import com.paycore.backend.dtos.Requests.CreatePaymentReq;
 import com.paycore.backend.dtos.Responses.PaymentInfosRes;
+import com.paycore.backend.dtos.Responses.ProcessPaymentRes;
+import com.paycore.backend.dtos.Responses.TransactionRes;
+import com.paycore.backend.dtos.Responses.ProcessingResult;
 import com.paycore.backend.entities.Customer;
 import com.paycore.backend.entities.Merchant;
 import com.paycore.backend.entities.Payment;
-import com.paycore.backend.enums.CustomerStatus;
-import com.paycore.backend.enums.MerchantStatus;
+import com.paycore.backend.entities.Transaction;
+import com.paycore.backend.enums.*;
 import com.paycore.backend.exceptions.custom.InactiveResourceException;
 import com.paycore.backend.exceptions.custom.ResourceNotFoundException;
+import com.paycore.backend.processors.impl.BankTransferProcessor;
+import com.paycore.backend.processors.impl.CardPaymentProcessor;
+import com.paycore.backend.processors.impl.WalletPaymentProcessor;
 import com.paycore.backend.repositories.CustomerRepository;
 import com.paycore.backend.repositories.MerchantRepository;
 import com.paycore.backend.repositories.PaymentRepository;
+import com.paycore.backend.repositories.TransactionInterface;
 import com.paycore.backend.utilities.EntityDtoMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class PaymentService {
@@ -24,17 +33,28 @@ public class PaymentService {
     private final MerchantRepository merchantRepository;
     private final CustomerRepository customerRepository;
     private final EntityDtoMapper entityDtoMapper;
+    private final BankTransferProcessor bankTransferProcessor;
+    private final CardPaymentProcessor cardPaymentProcessor;
+    private final WalletPaymentProcessor walletPaymentProcessor;
+    private final TransactionInterface transactionInterface;
 
 
     public PaymentService(PaymentRepository  paymentRepository,
                           MerchantRepository merchantRepository,
                           CustomerRepository customerRepository,
-                          EntityDtoMapper entityDtoMapper) {
+                          EntityDtoMapper entityDtoMapper,
+                          BankTransferProcessor bankTransferProcessor,
+                          CardPaymentProcessor cardPaymentProcessor,
+                          WalletPaymentProcessor walletPaymentProcessor,
+                          TransactionInterface transactionInterface) {
         this.paymentRepository = paymentRepository;
         this.merchantRepository = merchantRepository;
         this.customerRepository = customerRepository;
         this.entityDtoMapper = entityDtoMapper;
-
+        this.bankTransferProcessor = bankTransferProcessor;
+        this.cardPaymentProcessor = cardPaymentProcessor;
+        this.walletPaymentProcessor = walletPaymentProcessor;
+        this.transactionInterface = transactionInterface;
     }
 
     @Transactional
@@ -46,7 +66,7 @@ public class PaymentService {
 
         Customer customer = customerRepository.findById(request.customerID())
                 .orElseThrow(()  -> new ResourceNotFoundException(
-                        "Customer " + request.merchantID() + " not found")
+                        "Customer " + request.customerID() + " not found")
                 );
 
         if (merchant.getStatus() == MerchantStatus.INACTIVE ){
@@ -71,6 +91,52 @@ public class PaymentService {
         PaymentInfosRes response = entityDtoMapper.paymentEntityDtoMapper(payment);
 
         return response;
+    }
+
+    @Transactional
+    public ProcessPaymentRes processPayment(UUID paymentId){
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(()  -> new ResourceNotFoundException(
+                        "Payment " + paymentId + " not found")
+                );
+
+        payment.startProcessing();
+        ProcessingResult processingResult  = switch (payment.getMethod()) {
+            case PaymentMethod.BANK_TRANSFER -> bankTransferProcessor.processPayment(payment);
+            case PaymentMethod.CARD -> cardPaymentProcessor.processPayment(payment);
+            case PaymentMethod.WALLET -> walletPaymentProcessor.processPayment(payment);
+        };
+
+        if (processingResult.status() == PaymentStatus.SUCCESS){
+            payment.markSuccesful();
+        }else if  (processingResult.status() == PaymentStatus.FAILED){
+            payment.markFailed();
+        }
+        paymentRepository.save(payment);
+
+        TransactionStatus transactionStatus = processingResult.status() == PaymentStatus.SUCCESS
+                ? TransactionStatus.SUCCESS : TransactionStatus.FAILED;
+
+        Transaction processingTransaction = new Transaction(
+                payment,
+                TransactionType.PAYMENT,
+                payment.getAmount(),
+                processingResult.fee(),
+                transactionStatus
+        );
+        transactionInterface.save(processingTransaction);
+        TransactionRes transactionRes = new TransactionRes(
+                processingTransaction.getId(),
+                transactionStatus,
+                processingResult.fee()
+        );
+
+        ProcessPaymentRes processPaymentRes = new ProcessPaymentRes(
+                paymentId,
+                processingResult.status(),
+                transactionRes
+        );
+        return processPaymentRes;
     }
 
 }

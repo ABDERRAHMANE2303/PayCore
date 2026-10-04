@@ -3,11 +3,14 @@ package com.paycore.backend.controllers;
 
 import com.paycore.backend.dtos.Requests.CreatePaymentReq;
 import com.paycore.backend.dtos.Responses.PaymentInfosRes;
+import com.paycore.backend.dtos.Responses.ProcessPaymentRes;
 import com.paycore.backend.services.PaymentService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/payments")
@@ -26,4 +29,12 @@ public class PaymentController {
         PaymentInfosRes response = paymentService.createPayment(paymentInfosRes);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @PostMapping("/{id}/process")
+    public ResponseEntity<ProcessPaymentRes> processPayment(@PathVariable UUID id){
+        ProcessPaymentRes response = paymentService.processPayment(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response);
+    }
+
 }
