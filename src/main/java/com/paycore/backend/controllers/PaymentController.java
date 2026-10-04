@@ -2,6 +2,7 @@ package com.paycore.backend.controllers;
 
 
 import com.paycore.backend.dtos.requests.CreatePaymentRequest;
+import com.paycore.backend.dtos.responses.PaymentResponse;
 import com.paycore.backend.services.PaymentService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ public class PaymentController {
     public ResponseEntity<PaymentResponse> createPayment(
             @Valid @RequestBody CreatePaymentRequest request){
 
-        PaymentResponse response = paymentService.createAndProcessPayment(paymentDetails.id());
+        PaymentResponse response = paymentService.createAndProcessPayment(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

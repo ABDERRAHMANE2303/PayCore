@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public record TransactionDetails(
         UUID id,
-        TransactionType transactonType,
+        TransactionType transactionType,
         TransactionStatus transactionStatus,
         BigDecimal amount,
         BigDecimal fee,

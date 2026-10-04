@@ -58,7 +58,7 @@ public class PaymentService {
     }
 
 
-    public Payment createPaymentEntity(CreatePaymentRequest request) {
+    private Payment createPaymentEntity(CreatePaymentRequest request) {
         Merchant merchant = merchantRepository.findById(request.merchantId())
                 .orElseThrow(()  -> new ResourceNotFoundException(
                         "Merchant " + request.merchantId() + " not found")
@@ -91,7 +91,7 @@ public class PaymentService {
     }
 
 
-    public Transaction processPayment(UUID paymentId){
+    private Transaction processPayment(UUID paymentId){
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(()  -> new ResourceNotFoundException(
                         "Payment " + paymentId + " not found")
@@ -124,6 +124,20 @@ public class PaymentService {
         return processingTransaction;
     }
 
+    @Transactional
+    public PaymentResponse createAndProcessPayment(CreatePaymentRequest request){
 
+        Payment payment = createPaymentEntity(request);
+        paymentRepository.save(payment);
+        Transaction transaction = processPayment(payment.getId());
+        paymentRepository.save(payment);
+        transactionInterface.save(transaction);
+
+        PaymentDetails paymentDetails = entityDtoMapper.paymentEntityDtoMapper(payment);
+        TransactionDetails transactionDetails = entityDtoMapper.transactionEntityDtoMapper(transaction);
+
+        return new PaymentResponse(paymentDetails, transactionDetails);
+
+    }
 
 }
