@@ -2,9 +2,9 @@ package com.paycore.backend.services;
 
 
 import com.paycore.backend.dtos.requests.CreatePaymentRequest;
+import com.paycore.backend.dtos.responses.PaymentDetails;
 import com.paycore.backend.dtos.responses.PaymentResponse;
-import com.paycore.backend.dtos.responses.ProcessPaymentResponse;
-import com.paycore.backend.dtos.responses.TransactionResponse;
+import com.paycore.backend.dtos.responses.TransactionDetails;
 import com.paycore.backend.processors.ProcessingResult;
 import com.paycore.backend.entities.Customer;
 import com.paycore.backend.entities.Merchant;
@@ -57,8 +57,8 @@ public class PaymentService {
         this.transactionInterface = transactionInterface;
     }
 
-    @Transactional
-    public PaymentResponse createPayment(CreatePaymentRequest request) {
+
+    public Payment createPaymentEntity(CreatePaymentRequest request) {
         Merchant merchant = merchantRepository.findById(request.merchantId())
                 .orElseThrow(()  -> new ResourceNotFoundException(
                         "Merchant " + request.merchantId() + " not found")
@@ -87,14 +87,11 @@ public class PaymentService {
                 request.method()
         );
 
-        paymentRepository.save(payment);
-        PaymentResponse response = entityDtoMapper.paymentEntityDtoMapper(payment);
-
-        return response;
+        return payment;
     }
 
-    @Transactional
-    public ProcessPaymentResponse processPayment(UUID paymentId){
+
+    public Transaction processPayment(UUID paymentId){
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(()  -> new ResourceNotFoundException(
                         "Payment " + paymentId + " not found")
@@ -112,7 +109,6 @@ public class PaymentService {
         }else if  (processingResult.status() == PaymentStatus.FAILED){
             payment.markFailed();
         }
-        paymentRepository.save(payment);
 
         TransactionStatus transactionStatus = processingResult.status() == PaymentStatus.SUCCESS
                 ? TransactionStatus.SUCCESS : TransactionStatus.FAILED;
@@ -124,19 +120,10 @@ public class PaymentService {
                 processingResult.fee(),
                 transactionStatus
         );
-        transactionInterface.save(processingTransaction);
-        TransactionResponse transactionRes = new TransactionResponse(
-                processingTransaction.getId(),
-                transactionStatus,
-                processingResult.fee()
-        );
 
-        ProcessPaymentResponse processPaymentRes = new ProcessPaymentResponse(
-                paymentId,
-                processingResult.status(),
-                transactionRes
-        );
-        return processPaymentRes;
+        return processingTransaction;
     }
+
+
 
 }

@@ -3,7 +3,7 @@ package com.paycore.backend.controllers;
 
 import com.paycore.backend.dtos.requests.ChangeMerchantStatusRequest;
 import com.paycore.backend.dtos.requests.CreateMerchantRequest;
-import com.paycore.backend.dtos.responses.MerchantResponse;
+import com.paycore.backend.dtos.responses.MerchantDetailResponse;
 import com.paycore.backend.enums.MerchantCategory;
 import com.paycore.backend.enums.MerchantStatus;
 import com.paycore.backend.services.MerchantService;
@@ -26,30 +26,30 @@ public class MerchantController {
     }
 
     @PostMapping
-    public ResponseEntity<MerchantResponse> createMerchant(
+    public ResponseEntity<MerchantDetailResponse> createMerchant(
             @Valid @RequestBody CreateMerchantRequest request){
-        MerchantResponse response = merchantService.createMerchant(request);
+        MerchantDetailResponse response = merchantService.createMerchant(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MerchantResponse> getMerchantById(@PathVariable UUID id){
-        MerchantResponse response = merchantService.getMerchant(id);
+    public ResponseEntity<MerchantDetailResponse> getMerchantById(@PathVariable UUID id){
+        MerchantDetailResponse response = merchantService.getMerchant(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<MerchantResponse>> getAllMerchants(
+    public ResponseEntity<List<MerchantDetailResponse>> getAllMerchants(
             @RequestParam(required = false)
             MerchantStatus status,
             @RequestParam(required = false)
             MerchantCategory category
     ){
-        List<MerchantResponse> resp = merchantService.listMerchants(status, category);
+        List<MerchantDetailResponse> resp = merchantService.listMerchants(status, category);
         return ResponseEntity.ok(resp);
     }
 

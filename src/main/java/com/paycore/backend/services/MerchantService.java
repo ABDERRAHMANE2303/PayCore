@@ -3,7 +3,7 @@ package com.paycore.backend.services;
 
 import com.paycore.backend.dtos.requests.ChangeMerchantStatusRequest;
 import com.paycore.backend.dtos.requests.CreateMerchantRequest;
-import com.paycore.backend.dtos.responses.MerchantResponse;
+import com.paycore.backend.dtos.responses.MerchantDetailResponse;
 import com.paycore.backend.entities.Merchant;
 import com.paycore.backend.enums.MerchantCategory;
 import com.paycore.backend.enums.MerchantStatus;
@@ -30,7 +30,7 @@ public class MerchantService {
     }
 
     @Transactional
-    public MerchantResponse createMerchant(CreateMerchantRequest request) {
+    public MerchantDetailResponse createMerchant(CreateMerchantRequest request) {
         Merchant merchant = new Merchant(
                 request.name(),
                 request.category()
@@ -38,25 +38,25 @@ public class MerchantService {
 
         merchantRepository.save(merchant);
 
-        MerchantResponse response = entityDtoMapper.merchantEntityDtoMapper(merchant);
+        MerchantDetailResponse response = entityDtoMapper.merchantEntityDtoMapper(merchant);
 
         return  response;
     }
 
     @Transactional
-    public MerchantResponse getMerchant(UUID id) {
+    public MerchantDetailResponse getMerchant(UUID id) {
         Merchant merchant = merchantRepository.findById(id).
                 orElseThrow(() -> new ResourceNotFoundException("Merchant" + id+ "Not found"));
-        MerchantResponse response = entityDtoMapper.merchantEntityDtoMapper(merchant);
+        MerchantDetailResponse response = entityDtoMapper.merchantEntityDtoMapper(merchant);
         return response;
     }
 
     @Transactional
-    public List<MerchantResponse> listMerchants(
+    public List<MerchantDetailResponse> listMerchants(
             MerchantStatus status,
             MerchantCategory category) {
 
-        List<MerchantResponse> response = new ArrayList<>();
+        List<MerchantDetailResponse> response = new ArrayList<>();
         List<Merchant> merchants = new ArrayList<>();
         if (status == null && category == null) {
             merchants = merchantRepository.findAll();
@@ -69,7 +69,7 @@ public class MerchantService {
         }
 
         for (Merchant merchant :  merchants) {
-            MerchantResponse merchantInfos = entityDtoMapper.merchantEntityDtoMapper(merchant);
+            MerchantDetailResponse merchantInfos = entityDtoMapper.merchantEntityDtoMapper(merchant);
             response.add(merchantInfos);
         }
         return response;

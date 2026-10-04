@@ -1,45 +1,44 @@
 package com.paycore.backend.utilities;
 
-import com.paycore.backend.dtos.responses.CustomerResponse;
-import com.paycore.backend.dtos.responses.MerchantResponse;
-import com.paycore.backend.dtos.responses.PaymentResponse;
+import com.paycore.backend.dtos.responses.CustomerDetailsResponse;
+import com.paycore.backend.dtos.responses.MerchantDetailResponse;
+import com.paycore.backend.dtos.responses.PaymentDetails;
+import com.paycore.backend.dtos.responses.TransactionDetails;
 import com.paycore.backend.entities.Customer;
 import com.paycore.backend.entities.Merchant;
 import com.paycore.backend.entities.Payment;
+import com.paycore.backend.entities.Transaction;
 import org.springframework.stereotype.Component;
 
 
 @Component
 public class EntityDtoMapper {
 
-    public CustomerResponse customerEntityDtoMapper(Customer customer){
-        CustomerResponse reponse = new CustomerResponse(
+    public CustomerDetailsResponse customerEntityDtoMapper(Customer customer){
+        return new CustomerDetailsResponse(
                 customer.getId(),
                 customer.getName(),
                 customer.getCreatedAt(),
                 customer.getStatus()
         );
-
-        return reponse;
     }
 
-    public MerchantResponse merchantEntityDtoMapper(Merchant merchant){
-        MerchantResponse response = new MerchantResponse(
+    public MerchantDetailResponse merchantEntityDtoMapper(Merchant merchant){
+         return  new MerchantDetailResponse(
                 merchant.getId(),
                 merchant.getName(),
                 merchant.getCategory(),
                 merchant.getStatus(),
                 merchant.getCreatedAt()
         );
-        return response;
     }
 
-    public PaymentResponse paymentEntityDtoMapper(Payment payment){
+    public PaymentDetails paymentEntityDtoMapper(Payment payment){
 
-        CustomerResponse customerInfos =  customerEntityDtoMapper(payment.getCustomer());
-        MerchantResponse merchantInfos =  merchantEntityDtoMapper(payment.getMerchant());
+        CustomerDetailsResponse customerInfos =  customerEntityDtoMapper(payment.getCustomer());
+        MerchantDetailResponse merchantInfos =  merchantEntityDtoMapper(payment.getMerchant());
 
-        PaymentResponse response = new PaymentResponse(
+        PaymentDetails response = new PaymentDetails(
                 payment.getId(),
                 customerInfos,
                 merchantInfos,
@@ -51,6 +50,16 @@ public class EntityDtoMapper {
                 payment.getProcessedAt()
         );
         return response;
+    }
+
+    public TransactionDetails transactionEntityDtoMapper(Transaction transaction){
+        return  new TransactionDetails(
+              transaction.getId(),
+              transaction.getType(),
+              transaction.getStatus(),
+              transaction.getAmount(),
+              transaction.getFee(), transaction.getCreatedAt()
+        );
     }
 
 

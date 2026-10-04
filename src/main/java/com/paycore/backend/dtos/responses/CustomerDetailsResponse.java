@@ -5,7 +5,7 @@ import com.paycore.backend.enums.CustomerStatus;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record CustomerResponse(
+public record CustomerDetailsResponse(
         UUID id,
         String name,
         LocalDateTime createdAt,

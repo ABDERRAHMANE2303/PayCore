@@ -2,7 +2,7 @@ package com.paycore.backend.services;
 
 import com.paycore.backend.dtos.requests.ChangeCustomerStatusRequest;
 import com.paycore.backend.dtos.requests.CreateCustomerRequest;
-import com.paycore.backend.dtos.responses.CustomerResponse;
+import com.paycore.backend.dtos.responses.CustomerDetailsResponse;
 import com.paycore.backend.entities.Customer;
 import com.paycore.backend.enums.CustomerStatus;
 import com.paycore.backend.exceptions.custom.ResourceNotFoundException;
@@ -29,7 +29,7 @@ public class CustomerService {
     }
 
     @Transactional
-    public CustomerResponse createCustomer(CreateCustomerRequest request){
+    public CustomerDetailsResponse createCustomer(CreateCustomerRequest request){
 
         Customer customer = new Customer(
                 request.name()
@@ -37,31 +37,31 @@ public class CustomerService {
 
         customerRepository.save(customer);
 
-        CustomerResponse reponse = entityDtoMapper.customerEntityDtoMapper(customer);
+        CustomerDetailsResponse reponse = entityDtoMapper.customerEntityDtoMapper(customer);
 
         return reponse;
     }
 
     @Transactional
-    public CustomerResponse getCustomerById(UUID id){
+    public CustomerDetailsResponse getCustomerById(UUID id){
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Customer " + id + " was not found")
                 );
-        CustomerResponse reponse = entityDtoMapper.customerEntityDtoMapper(customer);
+        CustomerDetailsResponse reponse = entityDtoMapper.customerEntityDtoMapper(customer);
         return reponse;
     }
 
     @Transactional
-    public List<CustomerResponse> getAllCustomer(CustomerStatus status){
+    public List<CustomerDetailsResponse> getAllCustomer(CustomerStatus status){
 
         List<Customer> customers = status == null
                 ?customerRepository.findAll()
                 :customerRepository.findByStatus(status);
 
-        List<CustomerResponse> response = new ArrayList<>();
+        List<CustomerDetailsResponse> response = new ArrayList<>();
         for (Customer customer : customers) {
-            CustomerResponse customerInfos = entityDtoMapper.customerEntityDtoMapper(customer);
+            CustomerDetailsResponse customerInfos = entityDtoMapper.customerEntityDtoMapper(customer);
             response.add(customerInfos);
         }
 

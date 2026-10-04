@@ -6,7 +6,7 @@ import com.paycore.backend.enums.MerchantStatus;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record MerchantResponse(
+public record MerchantDetailResponse(
         UUID id,
         String name,
         MerchantCategory category,
