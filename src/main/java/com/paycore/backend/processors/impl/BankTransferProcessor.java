@@ -12,8 +12,8 @@ import java.math.BigDecimal;
 @Component
 public class BankTransferProcessor implements PaymentProcessor {
 
-    private BigDecimal maximumAmount = new BigDecimal("100000");
-    private BigDecimal fee =  new BigDecimal("0.01");
+    final private BigDecimal maximumAmount = new BigDecimal("100000");
+    final private BigDecimal fee =  new BigDecimal("0.01");
 
     public BankTransferProcessor() {}
 

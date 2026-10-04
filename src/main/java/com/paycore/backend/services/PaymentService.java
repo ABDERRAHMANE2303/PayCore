@@ -64,9 +64,9 @@ public class PaymentService {
                         "Merchant " + request.merchantId() + " not found")
                 );
 
-        Customer customer = customerRepository.findById(request.customerID())
+        Customer customer = customerRepository.findById(request.customerId())
                 .orElseThrow(()  -> new ResourceNotFoundException(
-                        "Customer " + request.customerID() + " not found")
+                        "Customer " + request.customerId()+ " not found")
                 );
 
         if (merchant.getStatus() == MerchantStatus.INACTIVE ){
@@ -108,7 +108,7 @@ public class PaymentService {
         };
 
         if (processingResult.status() == PaymentStatus.SUCCESS){
-            payment.markSuccesful();
+            payment.markSuccessful();
         }else if  (processingResult.status() == PaymentStatus.FAILED){
             payment.markFailed();
         }

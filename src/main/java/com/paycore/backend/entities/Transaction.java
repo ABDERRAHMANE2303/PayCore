@@ -21,14 +21,13 @@ public class Transaction {
     @JoinColumn ( name = "payment_id" , nullable = false)
     private Payment payment;
 
-    @Column
     @Enumerated(EnumType.STRING)
     private TransactionType type;
 
-    @Column
+    @Column(nullable = false)
     private BigDecimal amount;
 
-    @Column
+    @Column(nullable = false)
     private BigDecimal fee;
 
     @Column

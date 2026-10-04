@@ -52,7 +52,7 @@ public class Payment {
     private LocalDateTime refundedAt;
 
     @PrePersist
-    void Oncreate() {
+    void onCreate() {
         createdAt = LocalDateTime.now();
         status = PaymentStatus.PENDING;
     }
@@ -71,7 +71,7 @@ public class Payment {
         this.method = method;
     }
 
-    public void markSuccesful(){
+    public void markSuccessful(){
         if (status != PaymentStatus.PROCESSING){
             throw new InvalidPaymentStatusException(
                     "Only a processing payment can succeed");
