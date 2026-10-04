@@ -30,12 +30,15 @@ public class Payment {
     @Column(nullable = false)
     private BigDecimal amount;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Currency currency;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PaymentMethod method;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PaymentStatus status;
 
@@ -74,7 +77,7 @@ public class Payment {
                     "Only a processing payment can succeed");
         }
         this.status = PaymentStatus.SUCCESS;
-        this.createdAt = LocalDateTime.now();
+        this.processedAt = LocalDateTime.now();
 
     }
 

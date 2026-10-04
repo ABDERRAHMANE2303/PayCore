@@ -55,6 +55,8 @@ public class Transaction {
         this.status = status;
     }
 
+    protected Transaction() {}
+
     public UUID getId() {
         return id;
     }

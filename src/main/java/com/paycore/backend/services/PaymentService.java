@@ -19,7 +19,7 @@ import com.paycore.backend.processors.impl.WalletPaymentProcessor;
 import com.paycore.backend.repositories.CustomerRepository;
 import com.paycore.backend.repositories.MerchantRepository;
 import com.paycore.backend.repositories.PaymentRepository;
-import com.paycore.backend.repositories.TransactionInterface;
+import com.paycore.backend.repositories.TransactionRepository;
 import com.paycore.backend.utilities.EntityDtoMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,7 @@ public class PaymentService {
     private final BankTransferProcessor bankTransferProcessor;
     private final CardPaymentProcessor cardPaymentProcessor;
     private final WalletPaymentProcessor walletPaymentProcessor;
-    private final TransactionInterface transactionInterface;
+    private final TransactionRepository transactionInterface;
 
 
     public PaymentService(PaymentRepository  paymentRepository,
@@ -46,7 +46,7 @@ public class PaymentService {
                           BankTransferProcessor bankTransferProcessor,
                           CardPaymentProcessor cardPaymentProcessor,
                           WalletPaymentProcessor walletPaymentProcessor,
-                          TransactionInterface transactionInterface) {
+                          TransactionRepository transactionInterface) {
         this.paymentRepository = paymentRepository;
         this.merchantRepository = merchantRepository;
         this.customerRepository = customerRepository;
