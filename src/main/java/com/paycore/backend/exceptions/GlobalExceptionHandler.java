@@ -27,7 +27,7 @@ public class GlobalExceptionHandler  {
     }
 
 
-    @ExceptionHandler(InactiveResourceException.class)
+    @ExceptionHandler(InvalidPaymentStatusException.class)
     public ResponseEntity<ApiError> handleInvalidPaymentStatus(InvalidPaymentStatusException e){
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ApiError(HttpStatus.CONFLICT.value(), e.getMessage()));

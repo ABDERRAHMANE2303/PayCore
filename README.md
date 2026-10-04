@@ -590,6 +590,8 @@ Transaction -> record of a processing/refund attempt
 POST /api/payments/{id}/process
 ```
 
+This endpoint requires **no request body**. The payment ID in the path identifies the existing payment; its amount and method are read from the saved payment. `ProcessingResult` is an internal result returned by a `PaymentProcessor`, not a request DTO sent by the client.
+
 Only:
 
 ```text
@@ -637,11 +639,16 @@ Response example:
 ```json
 {
   "paymentId": "...",
-  "status": "SUCCESS",
-  "transactionId": "...",
-  "fee": 15.00
+  "paymentStatus": "SUCCESS",
+  "processTransaction": {
+    "transactionId": "...",
+    "transactionStatus": "SUCCESS",
+    "fee": 15.00
+  }
 }
 ```
+
+`paymentStatus` is the payment's current status. `processTransaction.transactionStatus` is the outcome of this processing attempt. They will usually match for this endpoint, but they describe different records.
 
 ---
 

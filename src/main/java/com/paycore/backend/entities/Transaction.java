@@ -22,20 +22,64 @@ public class Transaction {
     private Payment payment;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private TransactionType type;
 
     @Column
     private BigDecimal amount;
 
     @Column
-    BigDecimal fee;
+    private BigDecimal fee;
 
     @Column
-    TransactionStatus status;
+    @Enumerated(EnumType.STRING)
+    private TransactionStatus status;
 
     @Column
     private LocalDateTime createdAt;
 
+    @PrePersist
+    public void prePersist() {
+        createdAt = LocalDateTime.now();
+    }
 
+    public Transaction(Payment payment,
+                       TransactionType type,
+                       BigDecimal amount,
+                       BigDecimal fee,
+                       TransactionStatus status) {
+        this.payment = payment;
+        this.type = type;
+        this.amount = amount;
+        this.fee = fee;
+        this.status = status;
+    }
 
+    public UUID getId() {
+        return id;
+    }
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public TransactionType getType() {
+        return type;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public BigDecimal getFee() {
+        return fee;
+    }
+
+    public TransactionStatus getStatus() {
+        return status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }

@@ -74,6 +74,8 @@ public class Payment {
                     "Only a processing payment can succeed");
         }
         this.status = PaymentStatus.SUCCESS;
+        this.createdAt = LocalDateTime.now();
+
     }
 
     public void markFailed(){
@@ -82,6 +84,17 @@ public class Payment {
                     "Only a processing payment can fail");
         }
         this.status = PaymentStatus.FAILED;
+        this.processedAt = LocalDateTime.now();
+    }
+
+
+    public void startProcessing(){
+        if (status != PaymentStatus.PENDING){
+            throw new InvalidPaymentStatusException(
+                    "Only a pending payment can start processing"
+            );
+        }
+        this.status = PaymentStatus.PROCESSING;
     }
 
 
