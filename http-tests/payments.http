@@ -1,35 +1,40 @@
-@baseUrl = http://localhost:8080
 
-### Create an active customer for the payment request
-# @name createCustomer
-POST {{baseUrl}}/api/customers
+### Create payment (replace customerID and merchantID with existing IDs)
+POST http://localhost:8080/payments
 Content-Type: application/json
 
 {
-  "name": "Payment Test Customer"
-}
-> {% client.global.set("customerId", response.body.id); %}
-
-### Create an active merchant for the payment request
-# @name createMerchant
-POST {{baseUrl}}/api/merchants
-Content-Type: application/json
-
-{
-  "name": "Payment Test Store",
-  "category": "ECOMMERCE"
-}
-> {% client.global.set("merchantId", response.body.id); %}
-
-### Create payment (run the two setup requests above first)
-# @name createPayment
-POST {{baseUrl}}/payments
-Content-Type: application/json
-
-{
-  "customerID": "{{customerId}}",
-  "merchantID": "{{merchantId}}",
+  "customerID": "00000000-0000-0000-0000-000000000001",
+  "merchantID": "00000000-0000-0000-0000-000000000002",
   "amount": 750.00,
   "currency": "MAD",
   "method": "CARD"
 }
+
+### Process a CARD payment (replace with the payment ID returned by Create payment)
+POST http://localhost:8080/payments/00000000-0000-0000-0000-000000000003/process
+Accept: application/json
+
+### Create an over-limit WALLET payment (replace customerID and merchantID with existing IDs)
+POST http://localhost:8080/payments
+Content-Type: application/json
+
+{
+  "customerID": "00000000-0000-0000-0000-000000000001",
+  "merchantID": "00000000-0000-0000-0000-000000000002",
+  "amount": 6000.00,
+  "currency": "MAD",
+  "method": "WALLET"
+}
+
+### Process the over-limit WALLET payment (replace with its payment ID; expect FAILED result)
+POST http://localhost:8080/payments/00000000-0000-0000-0000-000000000004/process
+Accept: application/json
+
+### Try to process an already processed payment again (replace with its payment ID; expect 409)
+POST http://localhost:8080/payments/00000000-0000-0000-0000-000000000003/process
+Accept: application/json
+
+### Process a payment ID that does not exist (expect 404)
+POST http://localhost:8080/payments/00000000-0000-0000-0000-000000000000/process
+Accept: application/json

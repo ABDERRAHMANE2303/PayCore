@@ -1,8 +1,6 @@
-@baseUrl = http://localhost:8080
 
 ### Create merchant
-# @name createMerchant
-POST {{baseUrl}}/api/merchants
+POST http://localhost:8080/api/merchants
 Content-Type: application/json
 
 {
@@ -10,28 +8,28 @@ Content-Type: application/json
   "category": "ECOMMERCE"
 }
 
-### Get merchant by ID (uses ID from the create request above)
-GET {{baseUrl}}/api/merchants/d4cd750f-fdab-47d7-bb45-f475fef35b39
+### Get merchant by ID (replace with the ID returned by Create merchant)
+GET http://localhost:8080/api/merchants/00000000-0000-0000-0000-000000000002
 Accept: application/json
 
 ### List all merchants
-GET {{baseUrl}}/api/merchants
+GET http://localhost:8080/api/merchants
 Accept: application/json
 
-### List merchants by status
-GET {{baseUrl}}/api/merchants?status=ACTIVE
+### List active merchants
+GET http://localhost:8080/api/merchants?status=ACTIVE
 Accept: application/json
 
 ### List merchants by category
-GET {{baseUrl}}/api/merchants?category=ECOMMERCE
+GET http://localhost:8080/api/merchants?category=ECOMMERCE
 Accept: application/json
 
-### List merchants by status and category
-GET {{baseUrl}}/api/merchants?status=ACTIVE&category=ECOMMERCE
+### List active merchants by category
+GET http://localhost:8080/api/merchants?status=ACTIVE&category=ECOMMERCE
 Accept: application/json
 
-### Change merchant status (uses ID from the create request above)
-PATCH {{baseUrl}}/api/merchants/d4cd750f-fdab-47d7-bb45-f475fef35b39/status
+### Change merchant status (replace with the ID returned by Create merchant)
+PATCH http://localhost:8080/api/merchants/00000000-0000-0000-0000-000000000002/status
 Content-Type: application/json
 
 {
