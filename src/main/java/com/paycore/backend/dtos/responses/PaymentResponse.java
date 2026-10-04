@@ -1,25 +1,21 @@
-package com.paycore.backend.dtos.Responses;
+package com.paycore.backend.dtos.responses;
 
 import com.paycore.backend.enums.Currency;
 import com.paycore.backend.enums.PaymentMethod;
 import com.paycore.backend.enums.PaymentStatus;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record PaymentInfosRes(
+public record PaymentResponse(
         UUID id,
-        CustomerInfosRes customer,
-        MerchantInfosRes merchant,
+        CustomerResponse customer,
+        MerchantResponse merchant,
         BigDecimal amount,
         Currency currency,
         PaymentMethod method,
         PaymentStatus status,
         LocalDateTime createdAt,
         LocalDateTime processedAt
-)
-{}
+){}

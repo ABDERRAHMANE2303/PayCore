@@ -1,11 +1,11 @@
 package com.paycore.backend.services;
 
 
-import com.paycore.backend.dtos.Requests.CreatePaymentReq;
-import com.paycore.backend.dtos.Responses.PaymentInfosRes;
-import com.paycore.backend.dtos.Responses.ProcessPaymentRes;
-import com.paycore.backend.dtos.Responses.TransactionRes;
-import com.paycore.backend.dtos.Responses.ProcessingResult;
+import com.paycore.backend.dtos.requests.CreatePaymentRequest;
+import com.paycore.backend.dtos.responses.PaymentResponse;
+import com.paycore.backend.dtos.responses.ProcessPaymentResponse;
+import com.paycore.backend.dtos.responses.TransactionResponse;
+import com.paycore.backend.processors.ProcessingResult;
 import com.paycore.backend.entities.Customer;
 import com.paycore.backend.entities.Merchant;
 import com.paycore.backend.entities.Payment;
@@ -58,10 +58,10 @@ public class PaymentService {
     }
 
     @Transactional
-    public PaymentInfosRes createPayment(CreatePaymentReq request) {
-        Merchant merchant = merchantRepository.findById(request.merchantID())
+    public PaymentResponse createPayment(CreatePaymentRequest request) {
+        Merchant merchant = merchantRepository.findById(request.merchantId())
                 .orElseThrow(()  -> new ResourceNotFoundException(
-                        "Merchant " + request.merchantID() + " not found")
+                        "Merchant " + request.merchantId() + " not found")
                 );
 
         Customer customer = customerRepository.findById(request.customerID())
@@ -88,13 +88,13 @@ public class PaymentService {
         );
 
         paymentRepository.save(payment);
-        PaymentInfosRes response = entityDtoMapper.paymentEntityDtoMapper(payment);
+        PaymentResponse response = entityDtoMapper.paymentEntityDtoMapper(payment);
 
         return response;
     }
 
     @Transactional
-    public ProcessPaymentRes processPayment(UUID paymentId){
+    public ProcessPaymentResponse processPayment(UUID paymentId){
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(()  -> new ResourceNotFoundException(
                         "Payment " + paymentId + " not found")
@@ -125,13 +125,13 @@ public class PaymentService {
                 transactionStatus
         );
         transactionInterface.save(processingTransaction);
-        TransactionRes transactionRes = new TransactionRes(
+        TransactionResponse transactionRes = new TransactionResponse(
                 processingTransaction.getId(),
                 transactionStatus,
                 processingResult.fee()
         );
 
-        ProcessPaymentRes processPaymentRes = new ProcessPaymentRes(
+        ProcessPaymentResponse processPaymentRes = new ProcessPaymentResponse(
                 paymentId,
                 processingResult.status(),
                 transactionRes

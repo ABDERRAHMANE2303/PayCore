@@ -1,9 +1,9 @@
-package com.paycore.backend.dtos.Requests;
+package com.paycore.backend.dtos.requests;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record CreateCustomerReq(
+public record CreateCustomerRequest(
 
     @NotNull
     @NotBlank

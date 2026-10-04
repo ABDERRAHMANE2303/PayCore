@@ -1,6 +1,6 @@
 package com.paycore.backend.processors.impl;
 
-import com.paycore.backend.dtos.Responses.ProcessingResult;
+import com.paycore.backend.processors.ProcessingResult;
 import com.paycore.backend.entities.Payment;
 import com.paycore.backend.enums.PaymentStatus;
 import com.paycore.backend.processors.PaymentProcessor;

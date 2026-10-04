@@ -1,8 +1,8 @@
 package com.paycore.backend.services;
 
-import com.paycore.backend.dtos.Requests.ChangeCustomerStatusReq;
-import com.paycore.backend.dtos.Requests.CreateCustomerReq;
-import com.paycore.backend.dtos.Responses.CustomerInfosRes;
+import com.paycore.backend.dtos.requests.ChangeCustomerStatusRequest;
+import com.paycore.backend.dtos.requests.CreateCustomerRequest;
+import com.paycore.backend.dtos.responses.CustomerResponse;
 import com.paycore.backend.entities.Customer;
 import com.paycore.backend.enums.CustomerStatus;
 import com.paycore.backend.exceptions.custom.ResourceNotFoundException;
@@ -29,7 +29,7 @@ public class CustomerService {
     }
 
     @Transactional
-    public CustomerInfosRes createCustomer(CreateCustomerReq request){
+    public CustomerResponse createCustomer(CreateCustomerRequest request){
 
         Customer customer = new Customer(
                 request.name()
@@ -37,31 +37,31 @@ public class CustomerService {
 
         customerRepository.save(customer);
 
-        CustomerInfosRes reponse = entityDtoMapper.customerEntityDtoMapper(customer);
+        CustomerResponse reponse = entityDtoMapper.customerEntityDtoMapper(customer);
 
         return reponse;
     }
 
     @Transactional
-    public CustomerInfosRes getCustomerById(UUID id){
+    public CustomerResponse getCustomerById(UUID id){
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Customer " + id + " was not found")
                 );
-        CustomerInfosRes reponse = entityDtoMapper.customerEntityDtoMapper(customer);
+        CustomerResponse reponse = entityDtoMapper.customerEntityDtoMapper(customer);
         return reponse;
     }
 
     @Transactional
-    public List<CustomerInfosRes> getAllCustomer(CustomerStatus status){
+    public List<CustomerResponse> getAllCustomer(CustomerStatus status){
 
         List<Customer> customers = status == null
                 ?customerRepository.findAll()
                 :customerRepository.findByStatus(status);
 
-        List<CustomerInfosRes> response = new ArrayList<>();
+        List<CustomerResponse> response = new ArrayList<>();
         for (Customer customer : customers) {
-            CustomerInfosRes customerInfos = entityDtoMapper.customerEntityDtoMapper(customer);
+            CustomerResponse customerInfos = entityDtoMapper.customerEntityDtoMapper(customer);
             response.add(customerInfos);
         }
 
@@ -69,7 +69,7 @@ public class CustomerService {
     }
 
     @Transactional
-    public void changeCustomerStatus(UUID id, ChangeCustomerStatusReq request){
+    public void changeCustomerStatus(UUID id, ChangeCustomerStatusRequest request){
         Customer customer = customerRepository.findById(id)
                         .orElseThrow(
                                 () -> new ResourceNotFoundException("customer" + id + "Not found")

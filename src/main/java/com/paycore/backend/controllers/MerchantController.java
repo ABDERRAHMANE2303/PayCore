@@ -1,9 +1,9 @@
 package com.paycore.backend.controllers;
 
 
-import com.paycore.backend.dtos.Requests.ChangeMerchantStatusReq;
-import com.paycore.backend.dtos.Requests.CreateMerchantReq;
-import com.paycore.backend.dtos.Responses.MerchantInfosRes;
+import com.paycore.backend.dtos.requests.ChangeMerchantStatusRequest;
+import com.paycore.backend.dtos.requests.CreateMerchantRequest;
+import com.paycore.backend.dtos.responses.MerchantResponse;
 import com.paycore.backend.enums.MerchantCategory;
 import com.paycore.backend.enums.MerchantStatus;
 import com.paycore.backend.services.MerchantService;
@@ -26,37 +26,37 @@ public class MerchantController {
     }
 
     @PostMapping
-    public ResponseEntity<MerchantInfosRes> createMerchant(
-            @Valid @RequestBody CreateMerchantReq request){
-        MerchantInfosRes response = merchantService.createMerchant(request);
+    public ResponseEntity<MerchantResponse> createMerchant(
+            @Valid @RequestBody CreateMerchantRequest request){
+        MerchantResponse response = merchantService.createMerchant(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MerchantInfosRes> getMerchantById(@PathVariable UUID id){
-        MerchantInfosRes response = merchantService.getMerchant(id);
+    public ResponseEntity<MerchantResponse> getMerchantById(@PathVariable UUID id){
+        MerchantResponse response = merchantService.getMerchant(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<MerchantInfosRes>> getAllMerchants(
+    public ResponseEntity<List<MerchantResponse>> getAllMerchants(
             @RequestParam(required = false)
             MerchantStatus status,
             @RequestParam(required = false)
             MerchantCategory category
     ){
-        List<MerchantInfosRes> resp = merchantService.listMerchants(status, category);
+        List<MerchantResponse> resp = merchantService.listMerchants(status, category);
         return ResponseEntity.ok(resp);
     }
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<String>  updateMerchantStatus(
         @PathVariable UUID id,
-        @Valid @RequestBody ChangeMerchantStatusReq request
+        @Valid @RequestBody ChangeMerchantStatusRequest request
     ){
         merchantService.changeMerchantStatus(id,request);
         return ResponseEntity.ok("Status changed successfully");

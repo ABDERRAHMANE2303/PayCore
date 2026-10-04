@@ -1,8 +1,8 @@
-package com.paycore.backend.dtos.Requests;
+package com.paycore.backend.dtos.requests;
 
 import com.paycore.backend.enums.CustomerStatus;
 import jakarta.validation.constraints.NotNull;
 
-public record ChangeCustomerStatusReq(
+public record ChangeCustomerStatusRequest(
         @NotNull CustomerStatus status
 ){ }

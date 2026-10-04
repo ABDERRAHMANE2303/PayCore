@@ -1,12 +1,12 @@
-package com.paycore.backend.dtos.Responses;
+package com.paycore.backend.dtos.responses;
 
 import com.paycore.backend.enums.PaymentStatus;
 
 import java.util.UUID;
 
-public record ProcessPaymentRes(
+public record ProcessPaymentResponse(
         UUID paymentId,
         PaymentStatus paymentStatus,
-        TransactionRes processTransaction
+        TransactionResponse Transaction
         )
 {}

@@ -1,7 +1,7 @@
 package com.paycore.backend.exceptions;
 
 
-import com.paycore.backend.dtos.ApiError;
+import com.paycore.backend.dtos.responses.ApiErrorResponse;
 import com.paycore.backend.exceptions.custom.InactiveResourceException;
 import com.paycore.backend.exceptions.custom.InvalidPaymentStatusException;
 import com.paycore.backend.exceptions.custom.ResourceNotFoundException;
@@ -15,21 +15,21 @@ public class GlobalExceptionHandler  {
 
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiError> handleNotFoundResource(RuntimeException e){
+    public ResponseEntity<ApiErrorResponse> handleNotFoundResource(RuntimeException e){
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ApiError(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+                .body(new ApiErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
     }
 
     @ExceptionHandler(InactiveResourceException.class)
-    public ResponseEntity<ApiError> handleInactiveResource(InactiveResourceException e){
+    public ResponseEntity<ApiErrorResponse> handleInactiveResource(InactiveResourceException e){
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new ApiError(HttpStatus.CONFLICT.value(), e.getMessage()));
+                .body(new ApiErrorResponse(HttpStatus.CONFLICT.value(), e.getMessage()));
     }
 
 
     @ExceptionHandler(InvalidPaymentStatusException.class)
-    public ResponseEntity<ApiError> handleInvalidPaymentStatus(InvalidPaymentStatusException e){
+    public ResponseEntity<ApiErrorResponse> handleInvalidPaymentStatus(InvalidPaymentStatusException e){
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new ApiError(HttpStatus.CONFLICT.value(), e.getMessage()));
+                .body(new ApiErrorResponse(HttpStatus.CONFLICT.value(), e.getMessage()));
     }
 }

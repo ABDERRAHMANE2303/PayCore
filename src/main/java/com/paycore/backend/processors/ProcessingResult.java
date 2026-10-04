@@ -1,4 +1,4 @@
-package com.paycore.backend.dtos.Responses;
+package com.paycore.backend.processors;
 
 import com.paycore.backend.enums.PaymentStatus;
 

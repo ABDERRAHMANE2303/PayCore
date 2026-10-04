@@ -1,8 +1,8 @@
 package com.paycore.backend.utilities;
 
-import com.paycore.backend.dtos.Responses.CustomerInfosRes;
-import com.paycore.backend.dtos.Responses.MerchantInfosRes;
-import com.paycore.backend.dtos.Responses.PaymentInfosRes;
+import com.paycore.backend.dtos.responses.CustomerResponse;
+import com.paycore.backend.dtos.responses.MerchantResponse;
+import com.paycore.backend.dtos.responses.PaymentResponse;
 import com.paycore.backend.entities.Customer;
 import com.paycore.backend.entities.Merchant;
 import com.paycore.backend.entities.Payment;
@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class EntityDtoMapper {
 
-    public CustomerInfosRes customerEntityDtoMapper(Customer customer){
-        CustomerInfosRes reponse = new CustomerInfosRes(
+    public CustomerResponse customerEntityDtoMapper(Customer customer){
+        CustomerResponse reponse = new CustomerResponse(
                 customer.getId(),
                 customer.getName(),
                 customer.getCreatedAt(),
@@ -23,8 +23,8 @@ public class EntityDtoMapper {
         return reponse;
     }
 
-    public MerchantInfosRes merchantEntityDtoMapper(Merchant merchant){
-        MerchantInfosRes response = new MerchantInfosRes(
+    public MerchantResponse merchantEntityDtoMapper(Merchant merchant){
+        MerchantResponse response = new MerchantResponse(
                 merchant.getId(),
                 merchant.getName(),
                 merchant.getCategory(),
@@ -34,12 +34,12 @@ public class EntityDtoMapper {
         return response;
     }
 
-    public PaymentInfosRes paymentEntityDtoMapper(Payment payment){
+    public PaymentResponse paymentEntityDtoMapper(Payment payment){
 
-        CustomerInfosRes customerInfos =  customerEntityDtoMapper(payment.getCustomer());
-        MerchantInfosRes merchantInfos =  merchantEntityDtoMapper(payment.getMerchant());
+        CustomerResponse customerInfos =  customerEntityDtoMapper(payment.getCustomer());
+        MerchantResponse merchantInfos =  merchantEntityDtoMapper(payment.getMerchant());
 
-        PaymentInfosRes response = new PaymentInfosRes(
+        PaymentResponse response = new PaymentResponse(
                 payment.getId(),
                 customerInfos,
                 merchantInfos,
