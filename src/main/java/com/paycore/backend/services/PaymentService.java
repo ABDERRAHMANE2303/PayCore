@@ -2,9 +2,11 @@ package com.paycore.backend.services;
 
 
 import com.paycore.backend.dtos.requests.CreatePaymentRequest;
+import com.paycore.backend.dtos.requests.CreateRefundRequest;
 import com.paycore.backend.dtos.responses.PaymentDetails;
 import com.paycore.backend.dtos.responses.PaymentResponse;
 import com.paycore.backend.dtos.responses.TransactionDetails;
+import com.paycore.backend.exceptions.custom.InvalidAmountException;
 import com.paycore.backend.processors.ProcessingResult;
 import com.paycore.backend.entities.Customer;
 import com.paycore.backend.entities.Merchant;
@@ -24,6 +26,7 @@ import com.paycore.backend.utilities.EntityDtoMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
@@ -138,6 +141,32 @@ public class PaymentService {
 
         return new PaymentResponse(paymentDetails, transactionDetails);
 
+    }
+
+    @Transactional
+    public PaymentResponse createRefund(CreateRefundRequest request,UUID paymentId){
+        Payment payment = paymentRepository.findById(paymentId).
+                orElseThrow(()  -> new ResourceNotFoundException(
+                        "Payment " + paymentId + " not found")
+                );
+
+        BigDecimal refundAmount = request.amount();
+
+
+        payment.startRefunding();
+        payment.recordRefund(refundAmount);
+        payment.markRefunded();
+        Transaction transaction = new Transaction(
+                payment,
+                TransactionType.REFUND,
+                refundAmount,
+                BigDecimal.ZERO,
+                TransactionStatus.SUCCESS
+        );
+
+        PaymentDetails paymentDetails = entityDtoMapper.paymentEntityDtoMapper(payment);
+        TransactionDetails transactionDetails = entityDtoMapper.transactionEntityDtoMapper(transaction);
+        return new PaymentResponse(paymentDetails, transactionDetails);
     }
 
 }
