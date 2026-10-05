@@ -6,7 +6,6 @@ import com.paycore.backend.dtos.requests.CreateRefundRequest;
 import com.paycore.backend.dtos.responses.PaymentDetails;
 import com.paycore.backend.dtos.responses.PaymentResponse;
 import com.paycore.backend.dtos.responses.TransactionDetails;
-import com.paycore.backend.exceptions.custom.InvalidAmountException;
 import com.paycore.backend.processors.ProcessingResult;
 import com.paycore.backend.entities.Customer;
 import com.paycore.backend.entities.Merchant;
@@ -39,7 +38,7 @@ public class PaymentService {
     private final BankTransferProcessor bankTransferProcessor;
     private final CardPaymentProcessor cardPaymentProcessor;
     private final WalletPaymentProcessor walletPaymentProcessor;
-    private final TransactionRepository transactionInterface;
+    private final TransactionRepository transactionRepository;
 
 
     public PaymentService(PaymentRepository  paymentRepository,
@@ -57,7 +56,7 @@ public class PaymentService {
         this.bankTransferProcessor = bankTransferProcessor;
         this.cardPaymentProcessor = cardPaymentProcessor;
         this.walletPaymentProcessor = walletPaymentProcessor;
-        this.transactionInterface = transactionInterface;
+        this.transactionRepository = transactionInterface;
     }
 
 
@@ -134,7 +133,7 @@ public class PaymentService {
         paymentRepository.save(payment);
         Transaction transaction = processPayment(payment.getId());
         paymentRepository.save(payment);
-        transactionInterface.save(transaction);
+        transactionRepository.save(transaction);
 
         PaymentDetails paymentDetails = entityDtoMapper.paymentEntityDtoMapper(payment);
         TransactionDetails transactionDetails = entityDtoMapper.transactionEntityDtoMapper(transaction);
@@ -156,6 +155,7 @@ public class PaymentService {
         payment.startRefunding();
         payment.recordRefund(refundAmount);
         payment.markRefunded();
+
         Transaction transaction = new Transaction(
                 payment,
                 TransactionType.REFUND,
@@ -163,6 +163,8 @@ public class PaymentService {
                 BigDecimal.ZERO,
                 TransactionStatus.SUCCESS
         );
+
+        transactionRepository.save(transaction);
 
         PaymentDetails paymentDetails = entityDtoMapper.paymentEntityDtoMapper(payment);
         TransactionDetails transactionDetails = entityDtoMapper.transactionEntityDtoMapper(transaction);
