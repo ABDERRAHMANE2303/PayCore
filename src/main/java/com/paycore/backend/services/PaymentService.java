@@ -171,4 +171,12 @@ public class PaymentService {
         return new PaymentResponse(paymentDetails, transactionDetails);
     }
 
+    public PaymentDetails getPayment(UUID paymentId){
+        Payment payment =  paymentRepository.findById(paymentId)
+                .orElseThrow(()  -> new ResourceNotFoundException("" +
+                "Payment " + paymentId + " not found")
+                );
+        return entityDtoMapper.paymentEntityDtoMapper(payment);
+    }
+
 }

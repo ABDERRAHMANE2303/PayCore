@@ -3,6 +3,7 @@ package com.paycore.backend.controllers;
 
 import com.paycore.backend.dtos.requests.CreatePaymentRequest;
 import com.paycore.backend.dtos.requests.CreateRefundRequest;
+import com.paycore.backend.dtos.responses.PaymentDetails;
 import com.paycore.backend.dtos.responses.PaymentResponse;
 import com.paycore.backend.services.PaymentService;
 import jakarta.validation.Valid;
@@ -37,6 +38,12 @@ public class PaymentController {
     ){
         PaymentResponse response = paymentService.createRefund(request,id);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PaymentDetails> getPayment(@PathVariable UUID id){
+        PaymentDetails response = paymentService.getPayment(id);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 
