@@ -4,11 +4,13 @@ package com.paycore.backend.entities;
 import com.paycore.backend.enums.Currency;
 import com.paycore.backend.enums.PaymentMethod;
 import com.paycore.backend.enums.PaymentStatus;
+import com.paycore.backend.exceptions.custom.InvalidAmountException;
 import com.paycore.backend.exceptions.custom.InvalidPaymentStatusException;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -29,6 +31,9 @@ public class Payment {
 
     @Column(nullable = false)
     private BigDecimal amount;
+
+    @Column
+    private BigDecimal refundAmount =  BigDecimal.ZERO;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -90,6 +95,23 @@ public class Payment {
         this.processedAt = LocalDateTime.now();
     }
 
+    public void markRefunded(){
+        if (status != PaymentStatus.REFUNDING){
+            throw new InvalidPaymentStatusException(
+                    "Only a REFUNDING payment can be refund"
+            );
+        }
+
+        if (refundAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new InvalidAmountException("Record a positive refund before completing it");
+        }
+
+        PaymentStatus refundStatus = this.amount.compareTo(this.refundAmount)>0
+                ? PaymentStatus.PARTIALLY_REFUNDED
+                : PaymentStatus.REFUNDED;
+        this.status = refundStatus;
+        this.refundedAt = LocalDateTime.now();
+    }
 
     public void startProcessing(){
         if (status != PaymentStatus.PENDING){
@@ -100,7 +122,32 @@ public class Payment {
         this.status = PaymentStatus.PROCESSING;
     }
 
+    public void startRefunding(){
+        if (status != PaymentStatus.SUCCESS && status != PaymentStatus.PARTIALLY_REFUNDED){
+            throw new InvalidPaymentStatusException("Only a successful payment can be refunded");
+        }
+        this.status = PaymentStatus.REFUNDING;
+    }
 
+    public void recordRefund(BigDecimal refundAmount){
+
+        if (status != PaymentStatus.REFUNDING){
+            throw new InvalidPaymentStatusException(
+                    "Payment is not being refunded");
+        }
+
+        if (refundAmount == null || refundAmount.compareTo(BigDecimal.ZERO) <= 0){
+            throw new InvalidAmountException(
+                    "refunding amount must be greater than zero");
+        }
+        BigDecimal remaining = this.amount.subtract(this.refundAmount);
+        if  (remaining.compareTo(refundAmount) < 0){
+            throw new InvalidAmountException(
+                    "Refund exceeds the remaining amount"
+            );
+        }
+        this.refundAmount = this.refundAmount.add(refundAmount);
+    }
 
     public UUID getId() {
         return id;
