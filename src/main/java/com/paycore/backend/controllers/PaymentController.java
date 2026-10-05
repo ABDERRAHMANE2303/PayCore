@@ -5,12 +5,15 @@ import com.paycore.backend.dtos.requests.CreatePaymentRequest;
 import com.paycore.backend.dtos.requests.CreateRefundRequest;
 import com.paycore.backend.dtos.responses.PaymentDetails;
 import com.paycore.backend.dtos.responses.PaymentResponse;
+import com.paycore.backend.enums.PaymentStatus;
 import com.paycore.backend.services.PaymentService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -44,6 +47,22 @@ public class PaymentController {
     public ResponseEntity<PaymentDetails> getPayment(@PathVariable UUID id){
         PaymentDetails response = paymentService.getPayment(id);
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PaymentDetails>> getPayments(
+            @RequestParam(required = false)
+            UUID customerId,
+            @RequestParam(required = false)
+            UUID merchanId,
+            @RequestParam(required = false)
+            PaymentStatus status,
+            @RequestParam(required = false)
+            BigDecimal minAmount,
+            @RequestParam(required = false)
+            BigDecimal  maxAmount
+    ){
+
     }
 
 
