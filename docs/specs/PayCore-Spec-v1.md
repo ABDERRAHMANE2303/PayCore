@@ -46,7 +46,7 @@ Transaction
 Relationships:
 
 <p align="center">
-  <img src="docs/assets/paycore_domain_model_v1.png" alt="PayCore domain model" width="900">
+  <img src="../assets/paycore_domain_model_v1.png" alt="PayCore domain model" width="900">
 </p>
 
 <p align="center">
@@ -363,7 +363,7 @@ merchant is ACTIVE
 Service flow:
 
 <p align="center">
-  <img src="docs/assets/paycore_payment_flow.png" alt="PayCore payment flow" width="1000">
+  <img src="../assets/paycore_payment_flow.png" alt="PayCore payment flow" width="1000">
 </p>
 
 The operation runs inside `@Transactional`.
@@ -559,7 +559,7 @@ Refunds may be full or partial.
 Flow:
 
 <p align="center">
-  <img src="docs/assets/paycore_refund_flow.png" alt="PayCore refund flow" width="1000">
+  <img src="../assets/paycore_refund_flow.png" alt="PayCore refund flow" width="1000">
 </p>
 
 Rules:
