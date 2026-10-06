@@ -18,15 +18,12 @@ public class GlobalExceptionHandler  {
                 .body(new ApiErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
     }
 
-    @ExceptionHandler(InactiveResourceException.class)
-    public ResponseEntity<ApiErrorResponse> handleInactiveResource(InactiveResourceException e){
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new ApiErrorResponse(HttpStatus.CONFLICT.value(), e.getMessage()));
-    }
 
 
-    @ExceptionHandler(InvalidPaymentStatusException.class)
-    public ResponseEntity<ApiErrorResponse> handleInvalidPaymentStatus(InvalidPaymentStatusException e){
+
+    @ExceptionHandler({InvalidPaymentStatusException.class,
+            InactiveResourceException.class})
+    public ResponseEntity<ApiErrorResponse> handleConflictRequest(RuntimeException e){
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ApiErrorResponse(HttpStatus.CONFLICT.value(), e.getMessage()));
     }
