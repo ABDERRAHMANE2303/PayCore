@@ -6,6 +6,8 @@ import com.paycore.backend.dtos.requests.CreateRefundRequest;
 import com.paycore.backend.dtos.responses.PaymentDetails;
 import com.paycore.backend.dtos.responses.PaymentResponse;
 import com.paycore.backend.dtos.responses.TransactionDetails;
+import com.paycore.backend.exceptions.custom.InvalidOrderByOptionException;
+import com.paycore.backend.exceptions.custom.InvalidSortOptionException;
 import com.paycore.backend.processors.ProcessingResult;
 import com.paycore.backend.entities.Customer;
 import com.paycore.backend.entities.Merchant;
@@ -23,9 +25,14 @@ import com.paycore.backend.repositories.PaymentRepository;
 import com.paycore.backend.repositories.TransactionRepository;
 import com.paycore.backend.utilities.EntityDtoMapper;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @Service
@@ -171,12 +178,62 @@ public class PaymentService {
         return new PaymentResponse(paymentDetails, transactionDetails);
     }
 
+    @Transactional
     public PaymentDetails getPayment(UUID paymentId){
         Payment payment =  paymentRepository.findById(paymentId)
                 .orElseThrow(()  -> new ResourceNotFoundException("" +
                 "Payment " + paymentId + " not found")
                 );
         return entityDtoMapper.paymentEntityDtoMapper(payment);
+    }
+
+    @Transactional
+    public List<PaymentDetails> getPayments (
+            UUID customerId,
+            UUID merchantId,
+            PaymentStatus status,
+            PaymentMethod method,
+            BigDecimal minAmount,
+            BigDecimal maxAmount,
+            String sortBy,
+            String direction
+    ){
+
+        direction = direction.toLowerCase(Locale.ROOT);
+        List<String> allowedSortOptions = List.of("amount","status","method","createdAt","refundedAt","processedAt");
+        List<String> allowedDirections = List.of("asc","desc");
+        if (!allowedSortOptions.contains(sortBy)) {
+            throw new InvalidSortOptionException(
+                    "you can only sort by : amount,status,method,createdAt,refundedAt and processedAt");
+        }
+        if (!allowedDirections.contains(direction)) {
+            throw new InvalidOrderByOptionException(
+                    "you can only sort by : asc,desc"
+            );
+        }
+
+        Sort sort = Sort.by(
+                Sort.Direction.fromString(direction),
+                sortBy
+        );
+
+        List<Payment> payments = paymentRepository.search(
+                customerId,
+                merchantId,
+                status,
+                method,
+                minAmount,
+                maxAmount,
+                sort
+        );
+
+        List<PaymentDetails> paymentDetailsList = new ArrayList<>();
+        for (Payment payment : payments) {
+            PaymentDetails paymentDetails = entityDtoMapper.paymentEntityDtoMapper(payment);
+            paymentDetailsList.add(paymentDetails);
+        }
+
+        return paymentDetailsList;
     }
 
 }

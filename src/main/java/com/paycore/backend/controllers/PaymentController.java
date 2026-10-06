@@ -5,6 +5,7 @@ import com.paycore.backend.dtos.requests.CreatePaymentRequest;
 import com.paycore.backend.dtos.requests.CreateRefundRequest;
 import com.paycore.backend.dtos.responses.PaymentDetails;
 import com.paycore.backend.dtos.responses.PaymentResponse;
+import com.paycore.backend.enums.PaymentMethod;
 import com.paycore.backend.enums.PaymentStatus;
 import com.paycore.backend.services.PaymentService;
 import jakarta.validation.Valid;
@@ -50,19 +51,34 @@ public class PaymentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PaymentDetails>> getPayments(
+    public ResponseEntity<List<PaymentDetails>> listPayments(
             @RequestParam(required = false)
             UUID customerId,
             @RequestParam(required = false)
-            UUID merchanId,
+            UUID merchantId,
             @RequestParam(required = false)
             PaymentStatus status,
             @RequestParam(required = false)
+            PaymentMethod method,
+            @RequestParam(required = false)
             BigDecimal minAmount,
             @RequestParam(required = false)
-            BigDecimal  maxAmount
-    ){
+            BigDecimal  maxAmount,
+            @RequestParam(required = false , defaultValue = "createdAt") String sortBy,
+            @RequestParam(required = false , defaultValue = "desc") String direction
 
+    ){
+        List<PaymentDetails> response = paymentService.getPayments(
+                customerId,
+                merchantId,
+                status,
+                method,
+                minAmount,
+                maxAmount,
+                sortBy,
+                direction
+        );
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 

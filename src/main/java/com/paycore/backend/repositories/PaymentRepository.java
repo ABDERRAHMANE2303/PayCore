@@ -3,6 +3,7 @@ package com.paycore.backend.repositories;
 import com.paycore.backend.entities.Payment;
 import com.paycore.backend.enums.PaymentMethod;
 import com.paycore.backend.enums.PaymentStatus;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,43 +14,26 @@ import java.util.UUID;
 
 public interface PaymentRepository extends JpaRepository<Payment, UUID> {
 
-    public List<Payment> findByStatus(PaymentStatus status);
-
-    @Query("""
-        select p
-        from Payment p
-        where p.merchant.id = :merchantId        
-    """)
-    public List<Payment> findByMerchanrId(@Param("merchantId") UUID merchantId);
-
-    @Query("""
-        select p
-        from Payment p
-        where p.customer.id = :customerId
-    """)
-    public List<Payment> findByCustomerId(@Param("customerId") UUID customerId);
-
-
-    @Query("""
-        select p
-        from Payment p
-        where p.amount >= :minAmount
-    """)
-    public List<Payment> findByMinAmount(@Param("minAmount") BigDecimal minAmount);
-
-    @Query("""
-        select p
-        from Payment p
-        where p.amount <= :maxAmount
-    """)
-    public List<Payment> findByMaxAmount(@Param("maxAmount") BigDecimal maxAmount);
 
     @Query("""
     select p
     from Payment p 
-    where p.method = :methof
+    where (:customerId is null or p.customer.id = :customerId)
+        and (:merchantId is null or p.merchant.id = :merchantId)
+        and (:method is null or p.method = :method)
+        and (:status is null or p.status = :status)
+        and (:minAmount is null or p.amount >= :minAmount)
+        and (:maxAmount is null or p.amount <= :maxAmount)
     """)
-    public List<Payment> findByMethod(@Param("method")PaymentMethod method);
+    public List<Payment> search(@Param("customerId") UUID customerId,
+                                @Param("merchantId") UUID merchantId,
+                                @Param("status") PaymentStatus status,
+                                @Param("method") PaymentMethod method,
+                                @Param("minAmount")  BigDecimal minAmount,
+                                @Param("maxAmount") BigDecimal maxAmount,
+                                Sort sort
+
+    );
 
 
 }
