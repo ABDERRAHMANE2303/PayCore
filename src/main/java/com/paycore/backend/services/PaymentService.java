@@ -27,7 +27,6 @@ import com.paycore.backend.utilities.EntityDtoMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -239,11 +238,13 @@ public class PaymentService {
     @Transactional
     public List<TransactionDetails> getTransactions (UUID paymentId){
 
-        Payment payment = paymentRepository.findById(paymentId).orElseThrow(()  -> new ResourceNotFoundException(
-                "Payment " + paymentId + " not found"
-        ));
+        if (!paymentRepository.existsById(paymentId)) {
+            throw new ResourceNotFoundException(
+                    "Payment " + paymentId + " not found"
+            );
+        }
 
-        List<Transaction> transactions = transactionRepository.findByPaymentId(paymentId);
+        List<Transaction> transactions = transactionRepository.findByPayment_Id(paymentId);
         List<TransactionDetails> transactionDetailsList = new ArrayList<>();
         for (Transaction transaction : transactions) {
             TransactionDetails transactionDetails = entityDtoMapper.transactionEntityDtoMapper(transaction);
