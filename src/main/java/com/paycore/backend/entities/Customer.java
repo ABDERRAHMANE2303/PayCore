@@ -2,7 +2,6 @@ package com.paycore.backend.entities;
 
 import com.paycore.backend.enums.CustomerStatus;
 import jakarta.persistence.*;
-import jdk.jfr.Enabled;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

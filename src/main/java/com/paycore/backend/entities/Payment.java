@@ -10,7 +10,6 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -106,10 +105,9 @@ public class Payment {
             throw new InvalidAmountException("Record a positive refund before completing it");
         }
 
-        PaymentStatus refundStatus = this.amount.compareTo(this.refundAmount)>0
+        this.status = this.amount.compareTo(this.refundAmount)>0
                 ? PaymentStatus.PARTIALLY_REFUNDED
                 : PaymentStatus.REFUNDED;
-        this.status = refundStatus;
         this.refundedAt = LocalDateTime.now();
     }
 

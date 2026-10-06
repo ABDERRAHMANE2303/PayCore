@@ -37,9 +37,8 @@ public class CustomerService {
 
         customerRepository.save(customer);
 
-        CustomerDetailsResponse reponse = entityDtoMapper.customerEntityDtoMapper(customer);
+        return entityDtoMapper.customerEntityDtoMapper(customer);
 
-        return reponse;
     }
 
     @Transactional
@@ -48,8 +47,7 @@ public class CustomerService {
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Customer " + id + " was not found")
                 );
-        CustomerDetailsResponse reponse = entityDtoMapper.customerEntityDtoMapper(customer);
-        return reponse;
+        return entityDtoMapper.customerEntityDtoMapper(customer);
     }
 
     @Transactional

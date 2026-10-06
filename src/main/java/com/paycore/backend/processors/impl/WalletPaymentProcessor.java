@@ -27,11 +27,10 @@ public class WalletPaymentProcessor implements PaymentProcessor {
         }
 
         BigDecimal feeAmount = payment.getAmount().multiply(this.fee);
-        ProcessingResult result = new ProcessingResult(
+        return new ProcessingResult(
                 payment.getId(),
                 PaymentStatus.SUCCESS,
                 feeAmount
         );
-        return result;
     }
 }

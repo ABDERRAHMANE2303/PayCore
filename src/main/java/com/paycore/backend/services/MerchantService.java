@@ -38,17 +38,15 @@ public class MerchantService {
 
         merchantRepository.save(merchant);
 
-        MerchantDetailResponse response = entityDtoMapper.merchantEntityDtoMapper(merchant);
+        return entityDtoMapper.merchantEntityDtoMapper(merchant);
 
-        return  response;
     }
 
     @Transactional
     public MerchantDetailResponse getMerchant(UUID id) {
         Merchant merchant = merchantRepository.findById(id).
                 orElseThrow(() -> new ResourceNotFoundException("Merchant" + id+ "Not found"));
-        MerchantDetailResponse response = entityDtoMapper.merchantEntityDtoMapper(merchant);
-        return response;
+        return entityDtoMapper.merchantEntityDtoMapper(merchant);
     }
 
     @Transactional
@@ -57,7 +55,7 @@ public class MerchantService {
             MerchantCategory category) {
 
         List<MerchantDetailResponse> response = new ArrayList<>();
-        List<Merchant> merchants = new ArrayList<>();
+        List<Merchant> merchants ;
         if (status == null && category == null) {
             merchants = merchantRepository.findAll();
         } else if (status == null) {

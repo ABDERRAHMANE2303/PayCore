@@ -87,7 +87,7 @@ public class PaymentService {
                     "customer must be ACTIVE to proceed with the payment");
         }
 
-        Payment payment = new Payment(
+        return new Payment(
                 customer,
                 merchant,
                 request.amount(),
@@ -95,7 +95,6 @@ public class PaymentService {
                 request.method()
         );
 
-        return payment;
     }
 
 
@@ -121,7 +120,7 @@ public class PaymentService {
         TransactionStatus transactionStatus = processingResult.status() == PaymentStatus.SUCCESS
                 ? TransactionStatus.SUCCESS : TransactionStatus.FAILED;
 
-        Transaction processingTransaction = new Transaction(
+        return new Transaction(
                 payment,
                 TransactionType.PAYMENT,
                 payment.getAmount(),
@@ -129,7 +128,6 @@ public class PaymentService {
                 transactionStatus
         );
 
-        return processingTransaction;
     }
 
     @Transactional
@@ -180,7 +178,7 @@ public class PaymentService {
     @Transactional
     public PaymentDetails getPayment(UUID paymentId){
         Payment payment =  paymentRepository.findById(paymentId)
-                .orElseThrow(()  -> new ResourceNotFoundException("" +
+                .orElseThrow(()  -> new ResourceNotFoundException(
                 "Payment " + paymentId + " not found")
                 );
         return entityDtoMapper.paymentEntityDtoMapper(payment);
