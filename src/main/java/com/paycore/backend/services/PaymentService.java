@@ -236,4 +236,22 @@ public class PaymentService {
         return paymentDetailsList;
     }
 
+    @Transactional
+    public List<TransactionDetails> getTransactions (UUID paymentId){
+
+        Payment payment = paymentRepository.findById(paymentId).orElseThrow(()  -> new ResourceNotFoundException(
+                "Payment " + paymentId + " not found"
+        ));
+
+        List<Transaction> transactions = transactionRepository.findByPaymentId(paymentId);
+        List<TransactionDetails> transactionDetailsList = new ArrayList<>();
+        for (Transaction transaction : transactions) {
+            TransactionDetails transactionDetails = entityDtoMapper.transactionEntityDtoMapper(transaction);
+            transactionDetailsList.add(transactionDetails);
+        }
+        return transactionDetailsList;
+    }
+
+
+
 }

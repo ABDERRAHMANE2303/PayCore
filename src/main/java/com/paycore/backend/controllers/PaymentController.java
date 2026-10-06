@@ -5,6 +5,7 @@ import com.paycore.backend.dtos.requests.CreatePaymentRequest;
 import com.paycore.backend.dtos.requests.CreateRefundRequest;
 import com.paycore.backend.dtos.responses.PaymentDetails;
 import com.paycore.backend.dtos.responses.PaymentResponse;
+import com.paycore.backend.dtos.responses.TransactionDetails;
 import com.paycore.backend.enums.PaymentMethod;
 import com.paycore.backend.enums.PaymentStatus;
 import com.paycore.backend.services.PaymentService;
@@ -78,6 +79,14 @@ public class PaymentController {
                 sortBy,
                 direction
         );
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/{id}/transactions")
+    public ResponseEntity<List<TransactionDetails>> listTransactions(
+            @PathVariable UUID id
+    ){
+        List<TransactionDetails> response = paymentService.getTransactions(id);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
