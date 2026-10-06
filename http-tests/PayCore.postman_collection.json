@@ -1,0 +1,1186 @@
+{
+	"info": {
+		"_postman_id": "93a4c12b-e499-4bce-867a-b9f26d829050",
+		"name": "PayCore",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45061541",
+		"_collection_link": "https://abderrahmane-2455480.postman.co/workspace/pipelineX~9ef096f7-8ab6-4c08-986a-feb518d535db/collection/45061541-93a4c12b-e499-4bce-867a-b9f26d829050?action=share&source=collection_link&creator=45061541"
+	},
+	"item": [
+		{
+			"name": "Customers",
+			"item": [
+				{
+					"name": "Create customer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/customers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"customers"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Test Customer\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"description": "Expected: 201. Copy the returned id into the customer ID paths and payment request below."
+					},
+					"response": []
+				},
+				{
+					"name": "Get customer by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/customers/e32fcb70-dcca-4dc8-99d8-dbb2af10842d",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"customers",
+								"e32fcb70-dcca-4dc8-99d8-dbb2af10842d"
+							]
+						},
+						"description": "Replace the example ID with an existing customer ID. Expected: 200."
+					},
+					"response": []
+				},
+				{
+					"name": "List all customers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/customers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List active customers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/customers?status=ACTIVE",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"customers"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "ACTIVE"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change customer status to inactive",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/customers/e32fcb70-dcca-4dc8-99d8-dbb2af10842d/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"customers",
+								"e32fcb70-dcca-4dc8-99d8-dbb2af10842d",
+								"status"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"INACTIVE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"description": "Replace the example ID. Expected: 200."
+					},
+					"response": []
+				},
+				{
+					"name": "Change customer status to active",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/customers/e32fcb70-dcca-4dc8-99d8-dbb2af10842d/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"customers",
+								"e32fcb70-dcca-4dc8-99d8-dbb2af10842d",
+								"status"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"ACTIVE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"description": "Replace the example ID. Expected: 200."
+					},
+					"response": []
+				},
+				{
+					"name": "Create customer with blank name (validation error)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/customers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"customers"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"   \"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"description": "Expected: 400."
+					},
+					"response": []
+				},
+				{
+					"name": "Get missing customer (not found)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/customers/00000000-0000-0000-0000-000000000000",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"customers",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Expected: 404."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Merchants",
+			"item": [
+				{
+					"name": "Create merchant",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/merchants",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"merchants"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Test Merchant\",\n  \"category\": \"SERVICES\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"description": "Expected: 201. Copy the returned id into the merchant ID paths and payment request below."
+					},
+					"response": []
+				},
+				{
+					"name": "Get merchant by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/merchants/00000000-0000-0000-0000-000000000002",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"merchants",
+								"00000000-0000-0000-0000-000000000002"
+							]
+						},
+						"description": "Replace the example ID with an existing merchant ID. Expected: 200."
+					},
+					"response": []
+				},
+				{
+					"name": "List all merchants",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/merchants",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"merchants"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List active merchants",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/merchants?status=ACTIVE",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"merchants"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "ACTIVE"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List merchants by category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/merchants?category=SERVICES",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"merchants"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "SERVICES"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List merchants by status and category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/merchants?status=ACTIVE&category=SERVICES",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"merchants"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "ACTIVE"
+								},
+								{
+									"key": "category",
+									"value": "SERVICES"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change merchant status to inactive",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/merchants/00000000-0000-0000-0000-000000000002/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"merchants",
+								"00000000-0000-0000-0000-000000000002",
+								"status"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"INACTIVE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"description": "Replace the example ID. Expected: 200."
+					},
+					"response": []
+				},
+				{
+					"name": "Change merchant status to active",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/merchants/00000000-0000-0000-0000-000000000002/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"merchants",
+								"00000000-0000-0000-0000-000000000002",
+								"status"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"ACTIVE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"description": "Replace the example ID. Expected: 200."
+					},
+					"response": []
+				},
+				{
+					"name": "Get missing merchant (not found)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/merchants/00000000-0000-0000-0000-000000000000",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"merchants",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Expected: 404."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payments",
+			"item": [
+				{
+					"name": "Create and process successful card payment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/payments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": \"e32fcb70-dcca-4dc8-99d8-dbb2af10842d\",\n  \"merchantId\": \"00000000-0000-0000-0000-000000000002\",\n  \"amount\": 750.0,\n  \"currency\": \"MAD\",\n  \"method\": \"CARD\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"description": "Replace customerId and merchantId with IDs from the create requests. Expected: 201; payment and processing transaction should be SUCCESS. Copy the returned payment id for the refund and transaction requests."
+					},
+					"response": []
+				},
+				{
+					"name": "Create and process over-limit wallet payment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/payments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": \"e32fcb70-dcca-4dc8-99d8-dbb2af10842d\",\n  \"merchantId\": \"00000000-0000-0000-0000-000000000002\",\n  \"amount\": 6000.0,\n  \"currency\": \"MAD\",\n  \"method\": \"WALLET\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"description": "Replace customerId and merchantId. Expected: 201 with payment and transaction status FAILED. Copy its payment id for the failed-payment refund test."
+					},
+					"response": []
+				},
+				{
+					"name": "Get payment by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/payments/00000000-0000-0000-0000-000000000003",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments",
+								"00000000-0000-0000-0000-000000000003"
+							]
+						},
+						"description": "Replace the example ID with the successful payment ID. Expected: 200."
+					},
+					"response": []
+				},
+				{
+					"name": "List all payments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/payments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter payments by customer",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/payments?customerId=e32fcb70-dcca-4dc8-99d8-dbb2af10842d",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments"
+							],
+							"query": [
+								{
+									"key": "customerId",
+									"value": "e32fcb70-dcca-4dc8-99d8-dbb2af10842d"
+								}
+							]
+						},
+						"description": "Replace the example customer ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Filter payments by merchant",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/payments?merchantId=00000000-0000-0000-0000-000000000002",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments"
+							],
+							"query": [
+								{
+									"key": "merchantId",
+									"value": "00000000-0000-0000-0000-000000000002"
+								}
+							]
+						},
+						"description": "Replace the example merchant ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Filter successful payments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/payments?status=SUCCESS",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "SUCCESS"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter card payments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/payments?method=CARD",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments"
+							],
+							"query": [
+								{
+									"key": "method",
+									"value": "CARD"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter payments by amount range",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/payments?minAmount=100&maxAmount=1000",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments"
+							],
+							"query": [
+								{
+									"key": "minAmount",
+									"value": "100"
+								},
+								{
+									"key": "maxAmount",
+									"value": "1000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Combine payment filters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/payments?customerId=e32fcb70-dcca-4dc8-99d8-dbb2af10842d&merchantId=00000000-0000-0000-0000-000000000002&status=SUCCESS&method=CARD&minAmount=100&maxAmount=1000",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments"
+							],
+							"query": [
+								{
+									"key": "customerId",
+									"value": "e32fcb70-dcca-4dc8-99d8-dbb2af10842d"
+								},
+								{
+									"key": "merchantId",
+									"value": "00000000-0000-0000-0000-000000000002"
+								},
+								{
+									"key": "status",
+									"value": "SUCCESS"
+								},
+								{
+									"key": "method",
+									"value": "CARD"
+								},
+								{
+									"key": "minAmount",
+									"value": "100"
+								},
+								{
+									"key": "maxAmount",
+									"value": "1000"
+								}
+							]
+						},
+						"description": "Replace the example customer and merchant IDs."
+					},
+					"response": []
+				},
+				{
+					"name": "Sort payments by amount ascending",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/payments?sortBy=amount&direction=asc",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments"
+							],
+							"query": [
+								{
+									"key": "sortBy",
+									"value": "amount"
+								},
+								{
+									"key": "direction",
+									"value": "asc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sort payments by creation date descending",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/payments?sortBy=createdAt&direction=desc",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments"
+							],
+							"query": [
+								{
+									"key": "sortBy",
+									"value": "createdAt"
+								},
+								{
+									"key": "direction",
+									"value": "desc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reject unsupported sort field",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/payments?sortBy=customerId&direction=asc",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments"
+							],
+							"query": [
+								{
+									"key": "sortBy",
+									"value": "customerId"
+								},
+								{
+									"key": "direction",
+									"value": "asc"
+								}
+							]
+						},
+						"description": "Expected: 400."
+					},
+					"response": []
+				},
+				{
+					"name": "Reject unsupported sort direction",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/payments?sortBy=amount&direction=up",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments"
+							],
+							"query": [
+								{
+									"key": "sortBy",
+									"value": "amount"
+								},
+								{
+									"key": "direction",
+									"value": "up"
+								}
+							]
+						},
+						"description": "Expected: 400."
+					},
+					"response": []
+				},
+				{
+					"name": "Refund amount above the remaining balance",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/payments/00000000-0000-0000-0000-000000000003/refund",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments",
+								"00000000-0000-0000-0000-000000000003",
+								"refund"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 751.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"description": "Replace the example ID with a successful payment for 750 MAD. Expected: 400; the payment should remain refundable."
+					},
+					"response": []
+				},
+				{
+					"name": "Create partial refund",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/payments/00000000-0000-0000-0000-000000000003/refund",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments",
+								"00000000-0000-0000-0000-000000000003",
+								"refund"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 250.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"description": "Replace the example ID with the successful 750 MAD payment. Expected: 201; payment status PARTIALLY_REFUNDED and a successful REFUND transaction."
+					},
+					"response": []
+				},
+				{
+					"name": "Refund the remaining balance",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/payments/00000000-0000-0000-0000-000000000003/refund",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments",
+								"00000000-0000-0000-0000-000000000003",
+								"refund"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 500.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"description": "Run after the 250 MAD partial refund. Expected: 201; payment status REFUNDED."
+					},
+					"response": []
+				},
+				{
+					"name": "Reject refund after full refund",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/payments/00000000-0000-0000-0000-000000000003/refund",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments",
+								"00000000-0000-0000-0000-000000000003",
+								"refund"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 1.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"description": "Run after the payment is fully refunded. Expected: 409."
+					},
+					"response": []
+				},
+				{
+					"name": "Reject refund for failed payment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/payments/00000000-0000-0000-0000-000000000004/refund",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments",
+								"00000000-0000-0000-0000-000000000004",
+								"refund"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 100.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"description": "Replace with the over-limit wallet payment ID. Expected: 409."
+					},
+					"response": []
+				},
+				{
+					"name": "List payment transactions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/payments/00000000-0000-0000-0000-000000000003/transactions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments",
+								"00000000-0000-0000-0000-000000000003",
+								"transactions"
+							]
+						},
+						"description": "Replace the example ID with the successful payment ID. After the refunds, expect the payment transaction and both refund transactions."
+					},
+					"response": []
+				},
+				{
+					"name": "Get transactions for missing payment",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/payments/00000000-0000-0000-0000-000000000000/transactions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments",
+								"00000000-0000-0000-0000-000000000000",
+								"transactions"
+							]
+						},
+						"description": "Expected: 404."
+					},
+					"response": []
+				},
+				{
+					"name": "Get missing payment",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/payments/00000000-0000-0000-0000-000000000000",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Expected: 404."
+					},
+					"response": []
+				}
+			],
+			"description": "Payment creation processes the payment immediately in the current implementation. There is no separate process endpoint."
+		}
+	]
+}
