@@ -2,8 +2,8 @@ package com.paycore.backend.utilities;
 
 import com.paycore.backend.dtos.responses.CustomerDetailsResponse;
 import com.paycore.backend.dtos.responses.MerchantDetailResponse;
-import com.paycore.backend.dtos.responses.PaymentDetails;
-import com.paycore.backend.dtos.responses.TransactionDetails;
+import com.paycore.backend.dtos.responses.PaymentDetailsResponse;
+import com.paycore.backend.dtos.responses.TransactionDetailsResponse;
 import com.paycore.backend.entities.Customer;
 import com.paycore.backend.entities.Merchant;
 import com.paycore.backend.entities.Payment;
@@ -33,27 +33,28 @@ public class EntityDtoMapper {
         );
     }
 
-    public PaymentDetails paymentEntityDtoMapper(Payment payment){
+    public PaymentDetailsResponse paymentEntityDtoMapper(Payment payment){
 
         CustomerDetailsResponse customerInfos =  customerEntityDtoMapper(payment.getCustomer());
         MerchantDetailResponse merchantInfos =  merchantEntityDtoMapper(payment.getMerchant());
 
-        PaymentDetails response = new PaymentDetails(
+        return new PaymentDetailsResponse(
                 payment.getId(),
                 customerInfos,
                 merchantInfos,
                 payment.getAmount(),
+                payment.getRefundAmount(),
                 payment.getCurrency(),
                 payment.getMethod(),
                 payment.getStatus(),
                 payment.getCreatedAt(),
-                payment.getProcessedAt()
+                payment.getProcessedAt(),
+                payment.getRefundedAt()
         );
-        return response;
     }
 
-    public TransactionDetails transactionEntityDtoMapper(Transaction transaction){
-        return  new TransactionDetails(
+    public TransactionDetailsResponse transactionEntityDtoMapper(Transaction transaction){
+        return  new TransactionDetailsResponse(
               transaction.getId(),
               transaction.getType(),
               transaction.getStatus(),

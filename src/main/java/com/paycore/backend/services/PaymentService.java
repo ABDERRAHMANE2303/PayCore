@@ -3,9 +3,9 @@ package com.paycore.backend.services;
 
 import com.paycore.backend.dtos.requests.CreatePaymentRequest;
 import com.paycore.backend.dtos.requests.CreateRefundRequest;
-import com.paycore.backend.dtos.responses.PaymentDetails;
+import com.paycore.backend.dtos.responses.PaymentDetailsResponse;
 import com.paycore.backend.dtos.responses.PaymentResponse;
-import com.paycore.backend.dtos.responses.TransactionDetails;
+import com.paycore.backend.dtos.responses.TransactionDetailsResponse;
 import com.paycore.backend.exceptions.custom.InvalidOrderByOptionException;
 import com.paycore.backend.exceptions.custom.InvalidSortOptionException;
 import com.paycore.backend.processors.ProcessingResult;
@@ -54,7 +54,7 @@ public class PaymentService {
                           BankTransferProcessor bankTransferProcessor,
                           CardPaymentProcessor cardPaymentProcessor,
                           WalletPaymentProcessor walletPaymentProcessor,
-                          TransactionRepository transactionInterface) {
+                          TransactionRepository transactionRepository) {
         this.paymentRepository = paymentRepository;
         this.merchantRepository = merchantRepository;
         this.customerRepository = customerRepository;
@@ -62,7 +62,7 @@ public class PaymentService {
         this.bankTransferProcessor = bankTransferProcessor;
         this.cardPaymentProcessor = cardPaymentProcessor;
         this.walletPaymentProcessor = walletPaymentProcessor;
-        this.transactionRepository = transactionInterface;
+        this.transactionRepository = transactionRepository;
     }
 
 
@@ -98,12 +98,7 @@ public class PaymentService {
     }
 
 
-    private Transaction processPayment(UUID paymentId){
-        Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(()  -> new ResourceNotFoundException(
-                        "Payment " + paymentId + " not found")
-                );
-
+    private Transaction processPayment(Payment payment){
         payment.startProcessing();
         ProcessingResult processingResult  = switch (payment.getMethod()) {
             case PaymentMethod.BANK_TRANSFER -> bankTransferProcessor.processPayment(payment);
@@ -135,14 +130,13 @@ public class PaymentService {
 
         Payment payment = createPaymentEntity(request);
         paymentRepository.save(payment);
-        Transaction transaction = processPayment(payment.getId());
-        paymentRepository.save(payment);
+        Transaction transaction = processPayment(payment);
         transactionRepository.save(transaction);
 
-        PaymentDetails paymentDetails = entityDtoMapper.paymentEntityDtoMapper(payment);
-        TransactionDetails transactionDetails = entityDtoMapper.transactionEntityDtoMapper(transaction);
+        PaymentDetailsResponse paymentDetailsResponse = entityDtoMapper.paymentEntityDtoMapper(payment);
+        TransactionDetailsResponse transactionDetails = entityDtoMapper.transactionEntityDtoMapper(transaction);
 
-        return new PaymentResponse(paymentDetails, transactionDetails);
+        return new PaymentResponse(paymentDetailsResponse, transactionDetails);
 
     }
 
@@ -170,13 +164,13 @@ public class PaymentService {
 
         transactionRepository.save(transaction);
 
-        PaymentDetails paymentDetails = entityDtoMapper.paymentEntityDtoMapper(payment);
-        TransactionDetails transactionDetails = entityDtoMapper.transactionEntityDtoMapper(transaction);
-        return new PaymentResponse(paymentDetails, transactionDetails);
+        PaymentDetailsResponse paymentDetailsResponse = entityDtoMapper.paymentEntityDtoMapper(payment);
+        TransactionDetailsResponse transactionDetails = entityDtoMapper.transactionEntityDtoMapper(transaction);
+        return new PaymentResponse(paymentDetailsResponse, transactionDetails);
     }
 
     @Transactional
-    public PaymentDetails getPayment(UUID paymentId){
+    public PaymentDetailsResponse getPayment(UUID paymentId){
         Payment payment =  paymentRepository.findById(paymentId)
                 .orElseThrow(()  -> new ResourceNotFoundException(
                 "Payment " + paymentId + " not found")
@@ -185,7 +179,7 @@ public class PaymentService {
     }
 
     @Transactional
-    public List<PaymentDetails> getPayments (
+    public List<PaymentDetailsResponse> getPayments (
             UUID customerId,
             UUID merchantId,
             PaymentStatus status,
@@ -224,17 +218,17 @@ public class PaymentService {
                 sort
         );
 
-        List<PaymentDetails> paymentDetailsList = new ArrayList<>();
+        List<PaymentDetailsResponse> paymentDetailsResponseList = new ArrayList<>();
         for (Payment payment : payments) {
-            PaymentDetails paymentDetails = entityDtoMapper.paymentEntityDtoMapper(payment);
-            paymentDetailsList.add(paymentDetails);
+            PaymentDetailsResponse paymentDetailsResponse = entityDtoMapper.paymentEntityDtoMapper(payment);
+            paymentDetailsResponseList.add(paymentDetailsResponse);
         }
 
-        return paymentDetailsList;
+        return paymentDetailsResponseList;
     }
 
     @Transactional
-    public List<TransactionDetails> getTransactions (UUID paymentId){
+    public List<TransactionDetailsResponse> getTransactions (UUID paymentId){
 
         if (!paymentRepository.existsById(paymentId)) {
             throw new ResourceNotFoundException(
@@ -243,9 +237,9 @@ public class PaymentService {
         }
 
         List<Transaction> transactions = transactionRepository.findByPayment_Id(paymentId);
-        List<TransactionDetails> transactionDetailsList = new ArrayList<>();
+        List<TransactionDetailsResponse> transactionDetailsList = new ArrayList<>();
         for (Transaction transaction : transactions) {
-            TransactionDetails transactionDetails = entityDtoMapper.transactionEntityDtoMapper(transaction);
+            TransactionDetailsResponse transactionDetails = entityDtoMapper.transactionEntityDtoMapper(transaction);
             transactionDetailsList.add(transactionDetails);
         }
         return transactionDetailsList;

@@ -8,14 +8,16 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record PaymentDetails(
+public record PaymentDetailsResponse(
         UUID id,
         CustomerDetailsResponse customer,
         MerchantDetailResponse merchant,
         BigDecimal amount,
+        BigDecimal refundedAmount,
         Currency currency,
         PaymentMethod method,
         PaymentStatus status,
         LocalDateTime createdAt,
-        LocalDateTime processedAt
+        LocalDateTime processedAt,
+        LocalDateTime refundedAt
 ){}

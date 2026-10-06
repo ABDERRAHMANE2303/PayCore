@@ -3,9 +3,9 @@ package com.paycore.backend.controllers;
 
 import com.paycore.backend.dtos.requests.CreatePaymentRequest;
 import com.paycore.backend.dtos.requests.CreateRefundRequest;
-import com.paycore.backend.dtos.responses.PaymentDetails;
+import com.paycore.backend.dtos.responses.PaymentDetailsResponse;
 import com.paycore.backend.dtos.responses.PaymentResponse;
-import com.paycore.backend.dtos.responses.TransactionDetails;
+import com.paycore.backend.dtos.responses.TransactionDetailsResponse;
 import com.paycore.backend.enums.PaymentMethod;
 import com.paycore.backend.enums.PaymentStatus;
 import com.paycore.backend.services.PaymentService;
@@ -46,13 +46,13 @@ public class PaymentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PaymentDetails> getPayment(@PathVariable UUID id){
-        PaymentDetails response = paymentService.getPayment(id);
+    public ResponseEntity<PaymentDetailsResponse> getPayment(@PathVariable UUID id){
+        PaymentDetailsResponse response = paymentService.getPayment(id);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<PaymentDetails>> listPayments(
+    public ResponseEntity<List<PaymentDetailsResponse>> listPayments(
             @RequestParam(required = false)
             UUID customerId,
             @RequestParam(required = false)
@@ -69,7 +69,7 @@ public class PaymentController {
             @RequestParam(required = false , defaultValue = "desc") String direction
 
     ){
-        List<PaymentDetails> response = paymentService.getPayments(
+        List<PaymentDetailsResponse> response = paymentService.getPayments(
                 customerId,
                 merchantId,
                 status,
@@ -83,10 +83,10 @@ public class PaymentController {
     }
 
     @GetMapping("/{id}/transactions")
-    public ResponseEntity<List<TransactionDetails>> listTransactions(
+    public ResponseEntity<List<TransactionDetailsResponse>> listTransactions(
             @PathVariable UUID id
     ){
-        List<TransactionDetails> response = paymentService.getTransactions(id);
+        List<TransactionDetailsResponse> response = paymentService.getTransactions(id);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

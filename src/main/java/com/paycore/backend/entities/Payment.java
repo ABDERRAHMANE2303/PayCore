@@ -159,6 +159,9 @@ public class Payment {
     public BigDecimal getAmount() {
         return amount;
     }
+    public BigDecimal getRefundAmount() {
+        return refundAmount;
+    }
     public Currency getCurrency() {
         return currency;
     }
