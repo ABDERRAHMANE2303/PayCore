@@ -1,0 +1,16 @@
+.git
+.idea
+.vscode
+target
+build
+out
+http-tests
+docs
+
+# Keep local credentials out of the Docker build context.
+.env
+.env.*
+!.env.example
+
+*.log
+*.iml
